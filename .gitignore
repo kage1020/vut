@@ -8,3 +8,14 @@ wheels/
 
 # Virtual environments
 .venv
+
+# test
+coverages/
+.coverage
+
+# hydra
+outputs
+
+# misc
+*.log
+.env

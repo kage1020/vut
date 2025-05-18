@@ -1,0 +1,1 @@
+- [I3D](https://github.com/piergiaj/pytorch-i3d): Apache 2.0 License

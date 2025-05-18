@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "pytest --cov=vut -v tests/"
+        },
+        {
+            "label": "test(html report)",
+            "type": "shell",
+            "command": "pytest --cov=vut --cov-report=html -v tests/"
+        },
+        {
+            "label": "test(speed)",
+            "type": "shell",
+            "command": "PYTHONPATH=./ python tests/speed_measure.py"
+        },
+        {
+            "label": "test(current file)",
+            "type": "shell",
+            "command": "pytest --cov=vut -v ${file}"
+        }
+    ]
+}

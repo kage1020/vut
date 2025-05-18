@@ -30,6 +30,18 @@ Additionally, we provide a set of tools for data preprocessing, model training, 
 
 ## Installation
 
+You can install the toolkit using pip:
+
+```bash
+pip install vut
+```
+
+## Usage
+
+TODO: Provide usage examples and documentation for the various features and tools in the toolkit.
+
+## Development
+
 This toolkit requires package management tool [uv](https://docs.astral.sh/uv). You first need to install it:
 
 ```bash
@@ -44,9 +56,7 @@ cd vut
 uv sync
 ```
 
-## Usage
-
-TODO: Provide usage examples and documentation for the various features and tools in the toolkit.
+This will install all the required dependencies and set up the development environment.
 
 ## Contributing
 

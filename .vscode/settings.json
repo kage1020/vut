@@ -11,4 +11,11 @@
   "python.analysis.autoImportCompletions": true,
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.terminal.activateEnvironment": true,
+  "cSpell.words": [
+    "caplog",
+    "cudnn",
+    "ndarray",
+    "torchtyping"
+  ],
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
 }

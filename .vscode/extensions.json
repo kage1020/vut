@@ -1,6 +1,8 @@
 {
     "recommendations": [
         "donjayamanne.python-extension-pack",
-        "charliermarsh.ruff"
+        "charliermarsh.ruff",
+        "sanaajani.taskrunnercode",
+        "ms-vscode.live-server"
     ],
 }
