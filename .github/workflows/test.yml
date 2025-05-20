@@ -28,10 +28,12 @@ jobs:
         run: uv sync --locked --all-extras --dev
 
       - name: Run tests
-        run: uv run pytest --cov=vut --cov-report=term-missing tests/ > coverage.md
+        run: uv run pytest --cov=vut --cov-report=term-missing tests/
         continue-on-error: true
 
       - name: Post coverage report
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true
