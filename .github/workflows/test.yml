@@ -31,6 +31,7 @@ jobs:
 
       - name: Run tests with pytest
         run: |
+          source .venv/bin/activate
           pytest --cov=vut --cov-report=term-missing tests/ > coverage.md
 
       - name: Post coverage report
