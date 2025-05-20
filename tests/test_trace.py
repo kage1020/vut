@@ -46,8 +46,10 @@ def test_trace_module__ignores_non_call_events(mocker: MockFixture):
     frame = mocker.Mock()
     frame.f_code.co_filename = "/home/user/project/mymodule.py"
 
-    for event in ["line", "return", "exception"]:
-        with mocker.patch("sys.stdout", new=io.StringIO()) as fake_out:
+    with mocker.patch("sys.stdout", new=io.StringIO()) as fake_out:
+        for event in ["line", "return", "exception"]:
+            fake_out.truncate(0)
+            fake_out.seek(0)
             result = trace_module(frame, event, None)
             assert fake_out.getvalue() == ""
             assert result is trace_module
