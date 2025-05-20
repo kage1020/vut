@@ -14,4 +14,9 @@ def trace_module(frame, event: str, arg):
     return trace_module
 
 
-sys.settrace(trace_module)
+def enable_trace():
+    sys.settrace(trace_module)
+
+
+def disable_trace():
+    sys.settrace(None)
