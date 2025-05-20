@@ -23,15 +23,11 @@ jobs:
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
 
-      - name: Install dependencies with uv
+      - name: Run tests with pytest
         run: |
           uv venv
           source .venv/bin/activate
           uv sync
-
-      - name: Run tests with pytest
-        run: |
-          source .venv/bin/activate
           pytest --cov=vut --cov-report=term-missing tests/ > coverage.md
 
       - name: Post coverage report
