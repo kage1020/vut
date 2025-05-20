@@ -62,6 +62,7 @@ packages = ["vut"]
 
 [tool.pytest.ini_options]
 pythonpath = "./"
+addopts = "--cov=vut --cov-append -vv"
 
 [tool.coverage.run]
 branch = true
