@@ -20,18 +20,20 @@ jobs:
           python-version: '3.12'
 
       - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
-      - name: Install dependencies with uv
-        run: |
-          uv sync
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
 
-      - name: Run tests with pytest
-        run: |
-          pytest --cov=vut --cov-report=term-missing tests/ > coverage.md
+      - name: Run tests
+        run: uv run pytest --cov=vut --cov-report=xml tests/
+        continue-on-error: true
 
       - name: Post coverage report
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true

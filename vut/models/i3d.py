@@ -1,3 +1,9 @@
+# Licensed under the Apache License, Version 2.0
+# Original implementation: https://github.com/piergiaj/pytorch-i3d
+# This file is based on the I3D model implementation from the paper:
+# "Quo Vadis, Action Recognition? A New Model and the Kinetics Dataset"
+# https://arxiv.org/pdf/1705.07750
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
