@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/kage1020/vut)](https://github.com/kage1020/vut/blob/main/LICENSE)
 [![Version](https://img.shields.io/github/v/release/kage1020/vut)](https://github.com/kage1020/vut/releases)
 [![PyPI](https://img.shields.io/pypi/v/vut)](https://pypi.org/project/vut/)
-[![codecov](https://codecov.io/gh/kage1020/vut/graph/badge.svg?token=XWNCMG995B)](https://codecov.io/gh/kage1020/vut)
+[![codecov](https://codecov.io/gh/kage1020/vut/branch/main/graph/badge.svg)](https://codecov.io/gh/kage1020/vut)
 
 This repository provides a collection of tools and utilities for video understanding tasks, including video classification, action recognition, and more. The toolkit is designed to be modular and extensible, allowing researchers and developers to easily integrate new models and datasets.
 
@@ -70,7 +70,7 @@ The core functionality of this toolkit is licensed under the [MIT License](LICEN
 However, the models included in the `vut/models` directory may be subject to different licenses:
 
 - Each model implementation in the `vut/models` directory includes its own licensing information.
-- Please refer to the [models README](/vut/models/README.md) for specific license details of each model.
+- Please refer to the [models README](vut/models/README.md) for specific license details of each model.
 
 When using this toolkit, especially when incorporating the provided models, please make sure to comply with the respective licenses.
 

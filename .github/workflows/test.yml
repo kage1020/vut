@@ -25,6 +25,8 @@ jobs:
 
       - name: Install dependencies with uv
         run: |
+          uv venv
+          source .venv/bin/activate
           uv sync
 
       - name: Run tests with pytest
