@@ -34,6 +34,11 @@ def test_get_device__invalid_id():
         get_device(-1)
 
 
+def test_get_device__invalid_type():
+    with pytest.raises(ValueError):
+        get_device("invalid_type")
+
+
 def test_load_model__valid_path(mocker: MockFixture):
     model = I3D()
     logger = mocker.Mock()
@@ -50,6 +55,20 @@ def test_load_model__valid_path(mocker: MockFixture):
 
         assert logger.info.call_count == 1, "Logger should log info message"
         assert logger.warning.call_count == 0, "Logger should not log warning message"
+
+
+def test_load_model__no_logger(mocker: MockFixture):
+    model = I3D()
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        model_path = Path(temp_dir) / "model.pth"
+        torch.save(model.state_dict(), model_path)
+        assert model_path.exists(), "Model path should exist"
+        assert model_path.is_file(), "Model path should be a file"
+
+        mock_logger = mocker.patch("vut.cuda.get_logger")
+        model = load_model(model, model_path)
+        assert mock_logger.call_count == 1, "Logger should be called once"
 
 
 def test_load_model__with_device(mocker: MockFixture):

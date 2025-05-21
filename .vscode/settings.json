@@ -12,9 +12,17 @@
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.terminal.activateEnvironment": true,
   "cSpell.words": [
+    "addopts",
     "caplog",
     "cudnn",
+    "dotenv",
+    "imread",
+    "ipykernel",
     "ndarray",
+    "numpy",
+    "opencv",
+    "pytest",
+    "pythonpath",
     "torchtyping"
   ],
   "jupyter.notebookFileRoot": "${workspaceFolder}",

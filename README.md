@@ -1,37 +1,26 @@
-# Video Understanding Toolkit
+<h1 align="center">Video Understanding Toolkit</h1>
 
-[![License](https://img.shields.io/github/license/kage1020/vut)](https://github.com/kage1020/vut/blob/main/LICENSE)
-[![Version](https://img.shields.io/github/v/release/kage1020/vut)](https://github.com/kage1020/vut/releases)
-[![PyPI](https://img.shields.io/pypi/v/vut)](https://pypi.org/project/vut/)
-[![codecov](https://codecov.io/gh/kage1020/vut/branch/main/graph/badge.svg)](https://codecov.io/gh/kage1020/vut)
+<p align="center">
+  <a href="https://github.com/kage1020/vut">
+    <img src="https://img.shields.io/github/stars/kage1020/vut" alt="Stars" />
+  </a>
+  <a href="https://github.com/kage1020/vut/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/kage1020/vut" alt="License" />
+  </a>
+  <a href="https://pypi.org/project/vut/">
+    <img src="https://img.shields.io/pypi/v/vut" alt="Latest Release" />
+  </a>
+  <a href="https://codecov.io/gh/kage1020/vut" >
+   <img src="https://codecov.io/gh/kage1020/vut/graph/badge.svg?token=XWNCMG995B"/>
+  </a>
+</p>
+
 
 This repository provides a collection of tools and utilities for video understanding tasks, including video classification, action recognition, and more. The toolkit is designed to be modular and extensible, allowing researchers and developers to easily integrate new models and datasets.
 
 ## Features
 
 TODO: Implement the features and tools in the toolkit.
-
-We provide a variety of features to facilitate video understanding tasks:
-
-- **Action Recognition**: Implementations of popular action recognition models, including 3D CNNs, RNNs, and transformer-based architectures.
-- **Video Classification**: Tools for training and evaluating video classification models on various datasets.
-- **Video Retrieval**: Methods for retrieving relevant video content based on user queries.
-- **Action Segmentation**: Tools for segmenting actions in videos, including temporal action detection and spatio-temporal action localization.
-- **Video Captioning**: Generate natural language descriptions for video content.
-- **Video Question Answering**: Answer questions about video content using natural language processing techniques.
-- **Video Generation**: Generate new video content based on existing videos or textual descriptions.
-- **Video Summarization**: Create concise summaries of long videos while preserving important information.
-- **Video Object Detection**: Detect and localize objects in video frames.
-- **Video Object Tracking**: Track objects across video frames.
-- **Video Anomaly Detection**: Identify unusual or unexpected events in video data.
-
-Additionally, we provide a set of tools for data preprocessing, model training, and evaluation. The toolkit is designed to be easy to use and flexible, allowing users to customize their workflows as needed.
-
-- **Ground Truth Generation**: Generate ground truth labels for video datasets.
-- **Data Augmentation**: Apply various data augmentation techniques to improve model performance.
-- **Model Training**: Train models using various architectures and configurations.
-- **Model Evaluation**: Evaluate model performance using standard metrics and benchmarks.
-- **Visualization**: Visualize model predictions and performance metrics.
 
 ## Installation
 
@@ -58,6 +47,7 @@ Then, you can install the toolkit using the following command:
 ```bash
 git clone https://github.com/kage1020/vut.git
 cd vut
+uv venv
 uv sync
 ```
 

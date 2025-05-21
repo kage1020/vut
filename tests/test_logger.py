@@ -41,8 +41,8 @@ def test_get_logger__with_hydra(mocker: MockFixture, caplog):
         config.job.name = "test_job"
         mocker.patch("hydra.core.hydra_config.HydraConfig.get", return_value=config)
         logger = get_logger("with_hydra")
-        logger.info("This is an info message")
         logger.propagate = True
+        logger.info("This is an info message")
 
         log_file_path = os.path.join(temp_dir, "test_job.log")
         with open(log_file_path, "r") as f:
