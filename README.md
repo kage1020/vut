@@ -10,8 +10,8 @@
   <a href="https://pypi.org/project/vut/">
     <img src="https://img.shields.io/pypi/v/vut" alt="Latest Release" />
   </a>
-  <a href="https://codecov.io/gh/kage1020/vut">
-    <img src="https://codecov.io/gh/kage1020/vut/branch/main/graph/badge.svg" alt="Coverages" />
+  <a href="https://codecov.io/gh/kage1020/vut" >
+   <img src="https://codecov.io/gh/kage1020/vut/graph/badge.svg?token=XWNCMG995B"/>
   </a>
 </p>
 
