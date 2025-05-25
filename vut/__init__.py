@@ -20,7 +20,13 @@ from .mapping import to_class_index, to_class_name
 from .palette import ColorMapName, create_palette, template
 from .time import format_time, get_elapsed_time, get_time
 from .util import init_seed, to_list, to_np, to_tensor, unique
-from .visualize import plot_image, plot_palette
+from .visualize import (
+    plot_feature,
+    plot_features,
+    plot_image,
+    plot_images,
+    plot_palette,
+)
 
 __all__ = [
     "ColorMapName",
@@ -39,7 +45,10 @@ __all__ = [
     "get_images",
     "get_time",
     "get_elapsed_time",
+    "plot_feature",
+    "plot_features",
     "plot_image",
+    "plot_images",
     "plot_palette",
     "save",
     "save_image",

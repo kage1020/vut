@@ -19,7 +19,7 @@ class VideoWriter:
         framerate: int = 1,
         size: tuple[int, int] = (1920, 1080),
         pix_fmt_in: str | None = None,
-        pix_fmt_ou: str = "yuv420p",
+        pix_fmt_out: str = "yuv420p",
         quality: int = 28,
     ):
         self.filename = filename
@@ -30,7 +30,7 @@ class VideoWriter:
         self.maxsize = max(size)
         self.quality = quality
         self.pix_fmt_in = pix_fmt_in
-        self.pix_fmt_ou = pix_fmt_ou
+        self.pix_fmt_out = pix_fmt_out
 
     def __enter__(self):
         return self
@@ -73,7 +73,7 @@ class VideoWriter:
             )
             .output(
                 str(output),
-                pix_fmt=self.pix_fmt_ou,
+                pix_fmt=self.pix_fmt_out,
                 qmax=quality,
                 qmin=quality,
                 loglevel="quiet",

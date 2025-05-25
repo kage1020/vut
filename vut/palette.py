@@ -1,6 +1,8 @@
 from typing import Literal
 
 import matplotlib as mpl
+
+mpl.use("Agg")
 from matplotlib.colors import Colormap, ListedColormap
 
 type ColorMapName = Literal[
