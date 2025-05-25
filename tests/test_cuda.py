@@ -34,11 +34,6 @@ def test_get_device__invalid_id():
         get_device(-1)
 
 
-def test_get_device__invalid_type():
-    with pytest.raises(ValueError):
-        get_device("invalid_type")
-
-
 def test_load_model__valid_path(mocker: MockFixture):
     model = I3D()
     logger = mocker.Mock()

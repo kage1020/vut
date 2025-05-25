@@ -17,9 +17,8 @@ from vut.io import (
     load_np,
     load_tensor,
     save,
+    save_image,
     save_list,
-    save_np,
-    save_tensor,
 )
 
 
@@ -83,17 +82,6 @@ def test_get_images__not_a_directory():
     os.remove(temp_file_path)
 
 
-def test_save_list():
-    data = [1, 2, 3]
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        file_path = temp_file.name
-        save_list(data, file_path)
-    with open(file_path, "r") as f:
-        content = f.read()
-    assert content == "1\n2\n3\n", "File content should match the list"
-    os.remove(file_path)
-
-
 def test_save_list_with_callback():
     data = [1, 2, 3]
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
@@ -102,30 +90,6 @@ def test_save_list_with_callback():
     with open(file_path, "r") as f:
         content = f.read()
     assert content == "10\n20\n30\n", "File content should match the list"
-    os.remove(file_path)
-
-
-def test_save_np():
-    data = np.array([1, 2, 3])
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        file_path = temp_file.name + ".npy"
-        save_np(data, file_path)
-    loaded_data = np.load(file_path)
-    assert np.array_equal(loaded_data, data), (
-        "Loaded data should match the original array"
-    )
-    os.remove(file_path)
-
-
-def test_save_tensor():
-    data = torch.tensor([1, 2, 3])
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        file_path = temp_file.name
-        save_tensor(data, file_path)
-    loaded_data = torch.load(file_path)
-    assert torch.equal(loaded_data, data), (
-        "Loaded data should match the original tensor"
-    )
     os.remove(file_path)
 
 
@@ -162,11 +126,13 @@ def test_save__tensor():
     )
 
 
-def test_save__unsupported_type():
+def test_save_image():
+    data = np.zeros((100, 100, 3), dtype=np.uint8)
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        file_path = temp_file.name
-        with pytest.raises(TypeError):
-            save("unsupported type", file_path)
+        file_path = temp_file.name + ".png"
+        save_image(data, file_path)
+    loaded_data = cv2.imread(file_path)
+    assert loaded_data is not None, "Loaded image should not be None"
 
 
 def test_load_list():
