@@ -40,6 +40,7 @@ This toolkit requires package management tool [uv](https://docs.astral.sh/uv). Y
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.local/bin/env
 ```
 
 Then, you can install the toolkit using the following command:
@@ -48,6 +49,7 @@ Then, you can install the toolkit using the following command:
 git clone https://github.com/kage1020/vut.git
 cd vut
 uv venv
+source .venv/bin/activate
 uv sync
 ```
 

@@ -114,10 +114,16 @@ def save(x: list | NDArray | Tensor, path: str | Path) -> None:
         save_np(x, path)
     elif isinstance(x, torch.Tensor):
         save_tensor(x, path)
-    else:
-        raise TypeError(
-            f"Unsupported type: {type(x)}. Supported types are list, NDArray, and Tensor."
-        )
+
+
+def save_image(image: NDArray, path: str | Path) -> None:
+    """Save an image to a file.
+
+    Args:
+        image (NDArray): Image to save.
+        path (str | Path): Path to save the image.
+    """
+    cv2.imwrite(str(path), image)
 
 
 def load_list(path: str | Path, callback=None) -> list:

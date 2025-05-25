@@ -25,7 +25,6 @@ def get_device(id: int | str = 0) -> torch.device:
         return torch.device(f"cuda:{id}")
     if id == "cpu":
         return torch.device("cpu")
-    raise ValueError(f"Invalid device id: {id}. Must be an integer, 'cpu' or 'cuda'.")
 
 
 def load_model(

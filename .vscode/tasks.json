@@ -4,17 +4,17 @@
         {
             "label": "test",
             "type": "shell",
-            "command": "pytest tests/test_*.py"
+            "command": "pytest --cov=vut --cov-append -vv tests/"
         },
         {
             "label": "test(html report)",
             "type": "shell",
-            "command": "pytest --cov-report=html tests/test_*.py",
+            "command": "pytest --cov=vut --cov-append -vv --cov-report=html tests/",
         },
         {
             "label": "test(missing)",
             "type": "shell",
-            "command": "pytest --cov-report=term-missing tests/test_*.py",
+            "command": "pytest --cov=vut --cov-append -vv --cov-report=term-missing tests/",
         },
         {
             "label": "test(speed)",
@@ -24,7 +24,7 @@
         {
             "label": "test(current file)",
             "type": "shell",
-            "command": "pytest --cov-report=term-missing ${file}"
+            "command": "pytest --cov=vut --cov-append -vv --cov-report=term-missing ${file}"
         }
     ]
 }
