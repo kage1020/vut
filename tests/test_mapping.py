@@ -29,17 +29,6 @@ def test_to_class_name__empty():
     assert result == expected, f"Expected {expected}, but got {result}"
 
 
-def test_to_class_name__unsupported_type():
-    mapping = {
-        0: "cat",
-        1: "dog",
-        2: "bird",
-    }
-    indices = "cat"
-    with pytest.raises(TypeError):
-        to_class_name(indices, mapping)
-
-
 def test_to_class_name__unknown_index():
     mapping = {
         0: "cat",

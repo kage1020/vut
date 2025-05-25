@@ -32,9 +32,6 @@ def to_class_name(
         assert x.ndim == 1, "Tensor must be 1D"
         x = x.detach().cpu().tolist()
         return [index_to_text.get(i, "") for i in x]
-    raise TypeError(
-        f"Unsupported type: {type(x)}. Supported types are list, NDArray, and Tensor."
-    )
 
 
 def to_class_index(x: list[str], text_to_index: dict[str, int]) -> list[int]:

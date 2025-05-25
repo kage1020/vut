@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 import torch
 from torch.nn import Module
@@ -6,11 +7,11 @@ from torch.nn import Module
 from .logger import get_logger
 
 
-def get_device(id: int | str = 0) -> torch.device:
+def get_device(id: int | Literal["cpu", "cuda"] = 0) -> torch.device:
     """Get the device to be used for tensor operations.
 
     Args:
-        id (int | str, optional): Device index or 'cpu'. Defaults to 0.
+        id (int | Literal["cpu", "cuda"], optional): Device index or 'cpu'. Defaults to 0.
 
     Returns:
         torch.device: The device to be used for tensor operations.
@@ -25,13 +26,12 @@ def get_device(id: int | str = 0) -> torch.device:
         return torch.device(f"cuda:{id}")
     if id == "cpu":
         return torch.device("cpu")
-    raise ValueError(f"Invalid device id: {id}. Must be an integer, 'cpu' or 'cuda'.")
 
 
 def load_model(
     model: Module,
     model_path: str | Path,
-    device: torch.device | str = "cpu",
+    device: torch.device | Literal["cpu", "cuda"] = "cpu",
     logger=None,
     strict: bool = True,
 ):
@@ -40,7 +40,7 @@ def load_model(
     Args:
         model (Module): The model to be loaded.
         model_path (str | Path): The path to the model file.
-        device (torch.device | str, optional): The device to load the model onto. Defaults to "cpu".
+        device (torch.device | Literal["cpu", "cuda"], optional): The device to load the model onto. Defaults to "cpu".
         logger (Logger, optional): Logger for logging messages. Defaults to None.
         strict (bool, optional): Whether to enforce strict loading of the model. Defaults to True.
 
