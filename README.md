@@ -34,6 +34,21 @@ pip install vut
 
 TODO: Provide usage examples and documentation for the various features and tools in the toolkit.
 
+## Tools & Utilities
+
+In addition to the main toolkit, we provide some useful tools and utilities:
+
+### Matplotlib Colormap Visualization
+We've created an interactive web application for visualizing matplotlib colormaps. This tool helps you explore and choose the right colormap for your data visualization needs.
+
+🌈 **Visit the site**: [matplotlib-colormap.streamlit.app](https://matplotlib-colormap.streamlit.app/)
+
+This visualization tool provides:
+- Interactive preview of all matplotlib colormaps
+- Easy comparison between different colormaps
+- Information about colormap properties and use cases
+- Export capabilities for your selected colormaps
+
 ## Development
 
 This toolkit requires package management tool [uv](https://docs.astral.sh/uv). You first need to install it:

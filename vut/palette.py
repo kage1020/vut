@@ -5,6 +5,8 @@ import matplotlib as mpl
 mpl.use("Agg")
 from matplotlib.colors import Colormap, ListedColormap
 
+type RGB = tuple[float, float, float]
+
 type ColorMapName = Literal[
     "magma",
     "inferno",
@@ -202,11 +204,11 @@ def template(n: int, name: ColorMapName) -> Colormap:
     return mpl.colormaps[name].resampled(n)
 
 
-def create_palette(colors: list[tuple[float, float, float]]) -> Colormap:
+def create_palette(colors: list[RGB]) -> Colormap:
     """Create a custom colormap from a list of RGB tuples.
 
     Args:
-        colors (list[tuple[float, float, float]]): A list of RGB tuples, where each tuple contains three floats
+        colors (list[RGB]): A list of RGB tuples, where each tuple contains three floats
             representing the red, green, and blue components of a color, respectively.
 
     Returns:
