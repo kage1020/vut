@@ -17,8 +17,10 @@ def compute_tsne(
     Returns:
         NDArray: t-SNE embedding of the data with shape (n_samples, n_components).
     """
+    perplexity = min(30, max(1, data.shape[0] - 1))
     tsne = TSNE(
         n_components=n_components,
         random_state=random_state,
+        perplexity=perplexity,
     )
     return tsne.fit_transform(data)

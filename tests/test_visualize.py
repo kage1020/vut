@@ -6,6 +6,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from vut.visualize import (
+    make_video,
     plot_action_segmentation,
     plot_feature,
     plot_features,
@@ -13,6 +14,7 @@ from vut.visualize import (
     plot_images,
     plot_metrics,
     plot_palette,
+    plot_roc_curve,
     plot_scatter,
 )
 
@@ -335,9 +337,218 @@ def test_plot_action_segmentation__length_mismatch():
 def test_plot_action_segmentation__confidences_length_mismatch_with_prediction():
     ground_truth = [0, 1, 2, 3]
     prediction = [0, 1, 2, 3]
-    confidences = [0.1, 0.2, 0.3]  # Different length
+    confidences = [0.1, 0.2, 0.3]
 
     with pytest.raises(
         AssertionError, match="Confidences and prediction must have the same length"
     ):
         plot_action_segmentation(ground_truth, prediction, confidences)
+
+
+def test_plot_roc_curve__save_as_file():
+    ground_truth = [0, 0, 1, 1]
+    prediction = [0.1, 0.4, 0.35, 0.8]
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_roc_curve(ground_truth, prediction, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_roc_curve__show_in_jupyter(mocker: MockerFixture):
+    ground_truth = [0, 0, 1, 1]
+    prediction = [0.1, 0.4, 0.35, 0.8]
+    mock = mocker.patch("matplotlib.pyplot.show")
+    plot_roc_curve(ground_truth, prediction, is_jupyter=True)
+    mock.assert_called_once()
+
+
+def test_plot_roc_curve__return_canvas():
+    ground_truth = [0, 0, 1, 1]
+    prediction = [0.1, 0.4, 0.35, 0.8]
+    canvas = plot_roc_curve(ground_truth, prediction, return_canvas=True)
+    assert canvas.shape == (600, 800, 3)
+
+
+def test_plot_roc_curve__ground_truth_not_1d():
+    ground_truth = [[0, 1], [1, 0]]
+    prediction = [0.1, 0.8]
+
+    with pytest.raises(AssertionError, match="Ground truth must be a 1D array"):
+        plot_roc_curve(ground_truth, prediction)
+
+
+def test_plot_roc_curve__prediction_not_1d():
+    ground_truth = [0, 1]
+    prediction = [[0.1, 0.2], [0.8, 0.9]]
+
+    with pytest.raises(AssertionError, match="Prediction must be a 1D array"):
+        plot_roc_curve(ground_truth, prediction)
+
+
+def test_plot_roc_curve__length_mismatch():
+    ground_truth = [0, 1, 1]
+    prediction = [0.1, 0.8]
+
+    with pytest.raises(
+        AssertionError, match="Ground truth and prediction must have the same length"
+    ):
+        plot_roc_curve(ground_truth, prediction)
+
+
+def test_plot_roc_curve__invalid_ground_truth_labels():
+    ground_truth = [0, 1, 2]
+    prediction = [0.1, 0.4, 0.8]
+
+    with pytest.raises(AssertionError, match="Ground truth must contain only 0 and 1"):
+        plot_roc_curve(ground_truth, prediction)
+
+
+def test_make_video__with_image_paths():
+    image_paths = []
+    temp_files = []
+
+    for i in range(3):
+        img = np.random.randint(0, 256, (100, 100, 3), dtype=np.uint8)
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as video_file:
+        video_path = video_file.name
+
+    try:
+        make_video(image_paths=image_paths, path=video_path)
+
+        assert os.path.exists(video_path)
+        assert os.path.getsize(video_path) > 0
+
+    finally:
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+        if os.path.exists(video_path):
+            os.remove(video_path)
+
+
+def test_make_video__with_labels_and_data():
+    image_paths = []
+    temp_files = []
+
+    for i in range(5):
+        img = np.random.randint(0, 256, (120, 120, 3), dtype=np.uint8)
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+    ground_truth = [0, 1, 2, 1, 0]
+    prediction = [0, 1, 1, 2, 0]
+    confidences = [0.9, 0.8, 0.7, 0.6, 0.95]
+    labels = ["Background", "Action1", "Action2"]
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as video_file:
+        video_path = video_file.name
+
+    try:
+        make_video(
+            image_paths=image_paths,
+            ground_truth=ground_truth,
+            prediction=prediction,
+            confidences=confidences,
+            labels=labels,
+            path=video_path,
+            title="Test Video",
+            fps=2,
+            figsize=(8, 6),
+            legend_ncol=3,
+        )
+
+        assert os.path.exists(video_path)
+        assert os.path.getsize(video_path) > 0
+
+    finally:
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+        if os.path.exists(video_path):
+            os.remove(video_path)
+
+
+def test_make_video__no_segmentation_data():
+    image_paths = []
+    temp_files = []
+
+    for i in range(2):
+        img = np.random.randint(0, 256, (80, 80, 3), dtype=np.uint8)
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as video_file:
+        video_path = video_file.name
+
+    try:
+        # Test video creation without segmentation data
+        make_video(
+            image_paths=image_paths,
+            path=video_path,
+            show_segmentation=False,
+            show_confidence=False,
+            fps=1,
+        )
+
+        assert os.path.exists(video_path)
+        assert os.path.getsize(video_path) > 0
+
+    finally:
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+        if os.path.exists(video_path):
+            os.remove(video_path)
+
+
+def test_make_video__invalid_inputs():
+    with pytest.raises(
+        AssertionError, match="Either image_dir or image_paths must be provided"
+    ):
+        make_video()
+
+    with pytest.raises(AssertionError, match="No images found"):
+        make_video(image_paths=[])
+
+    image_paths = []
+    temp_files = []
+
+    try:
+        img = np.random.randint(0, 256, (50, 50, 3), dtype=np.uint8)
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+        ground_truth = [0, 1]
+
+        with pytest.raises(
+            AssertionError, match="Ground truth length must match number of images"
+        ):
+            make_video(image_paths=image_paths, ground_truth=ground_truth)
+
+    finally:
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)

@@ -22,6 +22,7 @@ from .reduction import compute_tsne
 from .time import format_time, get_elapsed_time, get_time
 from .util import init_seed, to_list, to_np, to_tensor, unique
 from .visualize import (
+    make_video,
     plot_action_segmentation,
     plot_feature,
     plot_features,
@@ -29,6 +30,7 @@ from .visualize import (
     plot_images,
     plot_metrics,
     plot_palette,
+    plot_roc_curve,
     plot_scatter,
 )
 
@@ -50,6 +52,7 @@ __all__ = [
     "get_images",
     "get_time",
     "get_elapsed_time",
+    "make_video",
     "plot_action_segmentation",
     "plot_feature",
     "plot_features",
@@ -57,6 +60,7 @@ __all__ = [
     "plot_images",
     "plot_metrics",
     "plot_palette",
+    "plot_roc_curve",
     "plot_scatter",
     "RGB",
     "save",

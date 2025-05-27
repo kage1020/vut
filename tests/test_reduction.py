@@ -4,7 +4,12 @@ from vut.reduction import compute_tsne
 
 
 def test_compute_tsne():
-    data = np.random.rand(10, 10)
+    data = np.random.rand(10, 100)
     result = compute_tsne(data)
     assert result.shape == (10, 2)
-    assert isinstance(result, np.ndarray)
+
+
+def test_compute_tsne__small_dataset():
+    data = np.random.rand(5, 10)
+    result = compute_tsne(data)
+    assert result.shape == (5, 2)
