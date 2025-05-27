@@ -20,7 +20,7 @@ def test_video_writer__init():
             assert writer.maxsize == 640
             assert writer.quality == 28
             assert writer.pix_fmt_in is None
-            assert writer.pix_fmt_ou == "yuv420p"
+            assert writer.pix_fmt_out == "yuv420p"
             assert writer.out is None
 
         assert os.path.exists(filename)
@@ -38,7 +38,7 @@ def test_video_writer__resize():
             resized_image = writer._resize(image, max_size=640, image_size=image.size)
 
             assert resized_image.shape == (640, 480, 3)
-            assert np.mean(resized_image) > 0  # Check if the image is not empty
+            assert np.mean(resized_image) > 0
     finally:
         os.remove(filename)
 
@@ -52,7 +52,6 @@ def test_video_writer__update():
             image = Image.new("RGB", (640, 480), color="red")
             writer.update(image)
 
-            # Since we cannot directly check the video content, we will check if the file exists
             assert os.path.exists(filename)
     finally:
         os.remove(filename)

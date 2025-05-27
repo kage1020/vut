@@ -418,7 +418,10 @@ class I3D(nn.Module):
     @typechecked
     def forward(
         self, x: TensorType["batch", "channel", "frames", "height":224, "width":224]
-    ) -> TensorType["batch", "num_classes", "T"]:
+    ) -> (
+        TensorType["batch", "num_classes", "T"]
+        | TensorType["batch", "num_classes", "T", 1, 1]
+    ):
         for end_point in self.VALID_ENDPOINTS:
             if end_point in self.end_points and end_point in self._modules:
                 x = self._modules[end_point](x)

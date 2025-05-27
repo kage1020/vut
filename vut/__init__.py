@@ -17,19 +17,26 @@ from .io import (
     save_tensor,
 )
 from .mapping import to_class_index, to_class_name
-from .palette import ColorMapName, create_palette, template
+from .palette import RGB, ColorMapName, create_palette, template
+from .reduction import compute_tsne
 from .time import format_time, get_elapsed_time, get_time
 from .util import init_seed, to_list, to_np, to_tensor, unique
 from .visualize import (
+    make_video,
+    plot_action_segmentation,
     plot_feature,
     plot_features,
     plot_image,
     plot_images,
+    plot_metrics,
     plot_palette,
+    plot_roc_curve,
+    plot_scatter,
 )
 
 __all__ = [
     "ColorMapName",
+    "compute_tsne",
     "create_palette",
     "format_time",
     "init_seed",
@@ -45,11 +52,17 @@ __all__ = [
     "get_images",
     "get_time",
     "get_elapsed_time",
+    "make_video",
+    "plot_action_segmentation",
     "plot_feature",
     "plot_features",
     "plot_image",
     "plot_images",
+    "plot_metrics",
     "plot_palette",
+    "plot_roc_curve",
+    "plot_scatter",
+    "RGB",
     "save",
     "save_image",
     "save_list",
