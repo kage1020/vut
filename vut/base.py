@@ -18,21 +18,39 @@ class Base:
 
     def __init__(
         self,
-        class_mapping_path: str | None = None,
+        class_mapping_path: str = None,
         class_mapping_has_header: bool = False,
-        class_mapping_separator: str | None = ",",
-        action_mapping_path: str | None = None,
+        class_mapping_separator: str = ",",
+        action_mapping_path: str = None,
         action_mapping_has_header: bool = False,
         action_mapping_action_separator: str = ",",
         action_mapping_step_separator: str = " ",
-        video_action_mapping_path: str | None = None,
+        video_action_mapping_path: str = None,
         video_action_mapping_has_header: bool = False,
         video_action_mapping_separator: str = ",",
-        video_boundary_dir_path: str | None = None,
+        video_boundary_dir_path: str = None,
         video_boundary_has_header: bool = False,
         video_boundary_separator: str = ",",
-        backgrounds: list[str] | None = None,
+        backgrounds: list[str] = None,
     ):
+        """Initialize the Base class.
+
+        Args:
+            class_mapping_path (str, optional): Path to the class mapping file. Defaults to None.
+            class_mapping_has_header (bool, optional): Whether the class mapping file has a header. Defaults to False.
+            class_mapping_separator (str, optional): Separator used in the class mapping file. Defaults to ",".
+            action_mapping_path (str, optional): Path to the action mapping file. Defaults to None.
+            action_mapping_has_header (bool, optional): Whether the action mapping file has a header. Defaults to False.
+            action_mapping_action_separator (str, optional): Separator used for actions in the action mapping file. Defaults to ",".
+            action_mapping_step_separator (str, optional): Separator used for steps in the action mapping file. Defaults to " ".
+            video_action_mapping_path (str, optional): Path to the video action mapping file. Defaults to None.
+            video_action_mapping_has_header (bool, optional): Whether the video action mapping file has a header. Defaults to False.
+            video_action_mapping_separator (str, optional): Separator used in the video action mapping file. Defaults to ",".
+            video_boundary_dir_path (str, optional): Path to the video boundary directory. Defaults to None.
+            video_boundary_has_header (bool, optional): Whether the video boundary files have headers. Defaults to False.
+            video_boundary_separator (str, optional): Separator used in the video boundary files. Defaults to ",".
+            backgrounds (list[str], optional): List of background images. Defaults to None.
+        """
         if class_mapping_path is not None:
             text_to_index, index_to_text = load_class_mapping(
                 class_mapping_path,

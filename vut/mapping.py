@@ -64,7 +64,7 @@ def to_class_mapping(x: list[tuple[int, str]]) -> tuple[dict[int, str], dict[str
         x (list[tuple[int, str]]): A list of tuples, where each tuple contains a class index and its name.
 
     Returns:
-        tuple[dict[int, str], dict[str, int]]: A tuple containing two dictionaries:
+        tuple[dict[str, int], dict[int, str]]: A tuple containing two dictionaries:
             - text_to_index: Mapping from class names to class indices.
             - index_to_text: Mapping from class indices to class names.
     """
@@ -138,7 +138,7 @@ def load_action_mapping(
         step_separator (str): Separator for the step name. Defaults to " ".
 
     Returns:
-        dict[str, list[str]]: A dictionary mapping step names to action names.
+        dict[str, list[str]]: A dictionary mapping action names to lists of step names.
     """
     path = Path(path)
     if not path.exists():
