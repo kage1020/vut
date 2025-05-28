@@ -2,7 +2,7 @@ import logging
 import os
 import tempfile
 
-from pytest_mock import MockFixture
+from pytest_mock import MockerFixture
 
 from vut.logger import get_logger
 
@@ -34,7 +34,7 @@ def test_get_logger__file_only(caplog):
     temp_file.close()
 
 
-def test_get_logger__with_hydra(mocker: MockFixture, caplog):
+def test_get_logger__with_hydra(mocker: MockerFixture, caplog):
     config = mocker.Mock()
     with tempfile.TemporaryDirectory() as temp_dir:
         config.runtime.output_dir = temp_dir

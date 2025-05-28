@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 import torch
-from pytest_mock import MockFixture
+from pytest_mock import MockerFixture
 
 from vut.util import Env, init_seed, to_list, to_np, to_tensor, unique
 
@@ -148,25 +148,25 @@ def test_to_tensor__unsupported_type():
         to_tensor("unsupported type")
 
 
-def test_env(mocker: MockFixture):
+def test_env(mocker: MockerFixture):
     mocker.patch.dict(os.environ, {"VUT_ENV": "test_env"})
     env = Env()
     assert env("VUT_ENV") == "test_env", "Should return the value of VUT_ENV"
 
 
-def test_env_bool(mocker: MockFixture):
+def test_env_bool(mocker: MockerFixture):
     mocker.patch.dict(os.environ, {"VUT_ENV": "True"})
     env = Env()
     assert env.bool("VUT_ENV") is True, "Should return True for 'True' string"
 
 
-def test_env_int(mocker: MockFixture):
+def test_env_int(mocker: MockerFixture):
     mocker.patch.dict(os.environ, {"VUT_ENV": "42"})
     env = Env()
     assert env.int("VUT_ENV") == 42, "Should return the integer value of VUT_ENV"
 
 
-def test_env_float(mocker: MockFixture):
+def test_env_float(mocker: MockerFixture):
     mocker.patch.dict(os.environ, {"VUT_ENV": "3.14"})
     env = Env()
     assert env.float("VUT_ENV") == 3.14, "Should return the float value of VUT_ENV"

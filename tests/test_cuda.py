@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 import torch
-from pytest_mock import MockFixture
+from pytest_mock import MockerFixture
 
 from vut.cuda import get_device, load_model, save_model
 from vut.models import I3D
@@ -34,7 +34,7 @@ def test_get_device__invalid_id():
         get_device(-1)
 
 
-def test_load_model__valid_path(mocker: MockFixture):
+def test_load_model__valid_path(mocker: MockerFixture):
     model = I3D()
     logger = mocker.Mock()
     logger.info = mocker.Mock()
@@ -52,7 +52,7 @@ def test_load_model__valid_path(mocker: MockFixture):
         assert logger.warning.call_count == 0, "Logger should not log warning message"
 
 
-def test_load_model__no_logger(mocker: MockFixture):
+def test_load_model__no_logger(mocker: MockerFixture):
     model = I3D()
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -66,7 +66,7 @@ def test_load_model__no_logger(mocker: MockFixture):
         assert mock_logger.call_count == 1, "Logger should be called once"
 
 
-def test_load_model__with_device(mocker: MockFixture):
+def test_load_model__with_device(mocker: MockerFixture):
     model = I3D()
     device = get_device()
     model = model.to(device)
@@ -86,7 +86,7 @@ def test_load_model__with_device(mocker: MockFixture):
         assert logger.warning.call_count == 0, "Logger should not log warning message"
 
 
-def test_load_model__invalid_path(mocker: MockFixture):
+def test_load_model__invalid_path(mocker: MockerFixture):
     model = I3D()
     logger = mocker.Mock()
     logger.info = mocker.Mock()
