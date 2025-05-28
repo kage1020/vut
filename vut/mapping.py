@@ -57,7 +57,7 @@ def to_class_index(x: list[str], text_to_index: dict[str, int]) -> list[int]:
     return [text_to_index.get(i, -1) for i in x]
 
 
-def to_class_mapping(x: list[tuple[int, str]]) -> tuple[dict[int, str], dict[str, int]]:
+def to_class_mapping(x: list[tuple[int, str]]) -> tuple[dict[str, int], dict[int, str]]:
     """Convert a list of class indices and names to a mapping.
 
     Args:
@@ -78,7 +78,7 @@ def to_class_mapping(x: list[tuple[int, str]]) -> tuple[dict[int, str], dict[str
 
 def load_class_mapping(
     path: str | Path, has_header: bool = False, separator: str = ","
-) -> tuple[dict[int, str], dict[str, int]]:
+) -> tuple[dict[str, int], dict[int, str]]:
     """Load class mapping from a csv-like file.
     Format should be:
     ```
@@ -91,6 +91,7 @@ def load_class_mapping(
     Args:
         path (str | Path): Path to the class mapping file.
         has_header (bool): Whether the file has a header line. Defaults to False.
+        separator (str): Separator for the index and class name. Defaults to ",".
 
     Returns:
         tuple[dict[int, str], dict[str, int]]: A tuple containing two dictionaries:

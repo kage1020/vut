@@ -17,6 +17,8 @@ def get_device(id: int | Literal["cpu", "cuda"] = 0) -> torch.device:
         torch.device: The device to be used for tensor operations.
     """
     if isinstance(id, int) or id == "cuda":
+        if id == "cuda":
+            return torch.device("cuda")
         if id < 0:
             raise ValueError(
                 f"Invalid device id: {id}. Must be a non-negative integer."
