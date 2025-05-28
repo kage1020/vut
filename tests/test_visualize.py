@@ -24,6 +24,31 @@ def img():
     return np.ceil(np.random.rand(100, 100, 3) * 255).astype(np.uint8)
 
 
+@pytest.fixture
+def mock_ffmpeg(mocker: MockerFixture):
+    """Mock ffmpeg to avoid dependency on ffmpeg installation"""
+    mock_stdin = mocker.Mock()
+    mock_stdin.write = mocker.Mock()
+    mock_stdin.close = mocker.Mock()
+
+    mock_process = mocker.Mock()
+    mock_process.stdin = mock_stdin
+    mock_process.wait = mocker.Mock()
+
+    mock_stream = mocker.Mock()
+    mock_stream.output = mocker.Mock(return_value=mock_stream)
+    mock_stream.overwrite_output = mocker.Mock(return_value=mock_stream)
+    mock_stream.run_async = mocker.Mock(return_value=mock_process)
+
+    mocker.patch("ffmpeg.input", return_value=mock_stream)
+
+    return {
+        "stdin": mock_stdin,
+        "process": mock_process,
+        "stream": mock_stream,
+    }
+
+
 def test_plot_palette__save_as_file(mocker: MockerFixture):
     mocker.patch("matplotlib.pyplot.get_cmap", return_value="viridis")
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
@@ -58,7 +83,7 @@ def test_plot_image__show_in_jupyter(img, mocker: MockerFixture):
 
 def test_plot_image__return_canvas(img):
     canvas = plot_image(img, return_canvas=True)
-    assert canvas.shape == (480, 640, 3)
+    assert canvas.shape == (600, 800, 3)
 
 
 def test_plot_images__save_as_file(img):
@@ -106,7 +131,7 @@ def test_plot_feature__show_in_jupyter(mocker: MockerFixture):
 def test_plot_feature__return_canvas():
     feature = np.random.rand(10, 10)
     canvas = plot_feature(feature, return_canvas=True)
-    assert canvas.shape == (480, 640, 3)
+    assert canvas.shape == (600, 800, 3)
 
 
 def test_plot_features__save_as_file():
@@ -404,7 +429,7 @@ def test_plot_roc_curve__invalid_ground_truth_labels():
         plot_roc_curve(ground_truth, prediction)
 
 
-def test_make_video__with_image_paths():
+def test_make_video__with_image_paths(mock_ffmpeg):
     image_paths = []
     temp_files = []
 
@@ -424,8 +449,10 @@ def test_make_video__with_image_paths():
     try:
         make_video(image_paths=image_paths, path=video_path)
 
-        assert os.path.exists(video_path)
-        assert os.path.getsize(video_path) > 0
+        assert mock_ffmpeg["stream"].output.called
+        assert mock_ffmpeg["stream"].overwrite_output.called
+        assert mock_ffmpeg["stream"].run_async.called
+        assert mock_ffmpeg["stdin"].write.called
 
     finally:
         for temp_file in temp_files:
@@ -435,7 +462,7 @@ def test_make_video__with_image_paths():
             os.remove(video_path)
 
 
-def test_make_video__with_labels_and_data():
+def test_make_video__with_labels_and_data(mock_ffmpeg):
     image_paths = []
     temp_files = []
 
@@ -471,8 +498,10 @@ def test_make_video__with_labels_and_data():
             legend_ncol=3,
         )
 
-        assert os.path.exists(video_path)
-        assert os.path.getsize(video_path) > 0
+        assert mock_ffmpeg["stream"].output.called
+        assert mock_ffmpeg["stream"].overwrite_output.called
+        assert mock_ffmpeg["stream"].run_async.called
+        assert mock_ffmpeg["stdin"].write.called
 
     finally:
         for temp_file in temp_files:
@@ -482,7 +511,7 @@ def test_make_video__with_labels_and_data():
             os.remove(video_path)
 
 
-def test_make_video__no_segmentation_data():
+def test_make_video__no_segmentation_data(mock_ffmpeg):
     image_paths = []
     temp_files = []
 
@@ -500,7 +529,6 @@ def test_make_video__no_segmentation_data():
         video_path = video_file.name
 
     try:
-        # Test video creation without segmentation data
         make_video(
             image_paths=image_paths,
             path=video_path,
@@ -509,8 +537,10 @@ def test_make_video__no_segmentation_data():
             fps=1,
         )
 
-        assert os.path.exists(video_path)
-        assert os.path.getsize(video_path) > 0
+        assert mock_ffmpeg["stream"].output.called
+        assert mock_ffmpeg["stream"].overwrite_output.called
+        assert mock_ffmpeg["stream"].run_async.called
+        assert mock_ffmpeg["stdin"].write.called
 
     finally:
         for temp_file in temp_files:

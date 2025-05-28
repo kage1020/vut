@@ -2,9 +2,36 @@ import os
 import tempfile
 
 import numpy as np
+import pytest
 from PIL import Image
+from pytest_mock import MockerFixture
 
 from vut.video.writer import VideoWriter
+
+
+@pytest.fixture
+def mock_ffmpeg(mocker: MockerFixture):
+    """Mock ffmpeg to avoid dependency on ffmpeg installation"""
+    mock_stdin = mocker.Mock()
+    mock_stdin.write = mocker.Mock()
+    mock_stdin.close = mocker.Mock()
+
+    mock_process = mocker.Mock()
+    mock_process.stdin = mock_stdin
+    mock_process.wait = mocker.Mock()
+
+    mock_stream = mocker.Mock()
+    mock_stream.output = mocker.Mock(return_value=mock_stream)
+    mock_stream.overwrite_output = mocker.Mock(return_value=mock_stream)
+    mock_stream.run_async = mocker.Mock(return_value=mock_process)
+
+    mocker.patch("ffmpeg.input", return_value=mock_stream)
+
+    return {
+        "stdin": mock_stdin,
+        "process": mock_process,
+        "stream": mock_stream,
+    }
 
 
 def test_video_writer__init():
@@ -43,7 +70,7 @@ def test_video_writer__resize():
         os.remove(filename)
 
 
-def test_video_writer__update():
+def test_video_writer__update(mock_ffmpeg):
     with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_file:
         filename = temp_file.name
 
@@ -52,6 +79,11 @@ def test_video_writer__update():
             image = Image.new("RGB", (640, 480), color="red")
             writer.update(image)
 
-            assert os.path.exists(filename)
+            assert mock_ffmpeg["stream"].output.called
+            assert mock_ffmpeg["stream"].overwrite_output.called
+            assert mock_ffmpeg["stream"].run_async.called
+            assert mock_ffmpeg["stdin"].write.called
+
+        assert os.path.exists(filename)
     finally:
         os.remove(filename)

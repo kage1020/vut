@@ -2,10 +2,6 @@ MIT License
 
 Copyright (c) 2025 kage1020
 
-This license applies to the core functionality of the Video Understanding Toolkit (VUT),
-EXCLUDING the model implementations in the vut/models directory, which may be subject to
-different licenses as specified in their respective directories.
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
