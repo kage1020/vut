@@ -1,3 +1,4 @@
+import os
 import random
 
 import numpy as np
@@ -121,3 +122,55 @@ def to_tensor(x: list | NDArray | Tensor) -> Tensor:
     raise TypeError(
         f"Unsupported type: {type(x)}. Supported types are list, NDArray, and Tensor."
     )
+
+
+class Env:
+    def __call__(self, name: str) -> str:
+        """Get the value of an environment variable.
+
+        Args:
+            name (str): Name of the environment variable.
+
+        Returns:
+            str: Value of the environment variable or an empty string if not set.
+        """
+        return os.getenv(name, "")
+
+    def bool(self, name: str) -> bool:
+        """Get the boolean value of an environment variable.
+
+        Args:
+            name (str): Name of the environment variable.
+
+        Returns:
+            bool: True if the environment variable is set to '1', 'true', or 'yes', False otherwise.
+        """
+        return self(name).lower() in ("1", "true", "yes")
+
+    def int(self, name: str) -> int:
+        """Get the integer value of an environment variable.
+
+        Args:
+            name (str): Name of the environment variable.
+
+        Returns:
+            int: Integer value of the environment variable or 0 if not set.
+        """
+        try:
+            return int(self(name))
+        except ValueError:
+            return 0
+
+    def float(self, name: str) -> float:
+        """Get the float value of an environment variable.
+
+        Args:
+            name (str): Name of the environment variable.
+
+        Returns:
+            float: Float value of the environment variable or 0.0 if not set.
+        """
+        try:
+            return float(self(name))
+        except ValueError:
+            return 0.0

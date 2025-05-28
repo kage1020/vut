@@ -20,6 +20,7 @@ def plot_palette(
     palette: NDArray | list[RGB] = None,
     n: int = 256,
     path: str | Path = "palette.png",
+    figsize: tuple[int, int] = (8, 2),
 ) -> None:
     """Plot a color palette.
 
@@ -28,6 +29,7 @@ def plot_palette(
         palette (NDArray | list[RGB], optional): A custom color palette. Defaults to None.
         n (int, optional): The number of colors in the colormap. Defaults to 256.
         path (str | Path, optional): The file path to save the plot. Defaults to "palette.png".
+        figsize (tuple[int, int], optional): The size of the figure. Defaults to (8, 2).
     """
     assert name is not None or palette is not None, (
         "Either name or palette must be provided"
@@ -38,7 +40,7 @@ def plot_palette(
         assert palette.ndim == 2, "Palette must be a 2D array"
         cmap = create_palette(palette)
     gradient = np.linspace(0, 1, n)
-    fig, ax = plt.subplots(figsize=(8, 2))
+    fig, ax = plt.subplots(figsize=figsize)
     ax.imshow(
         np.vstack((gradient, gradient)),
         aspect="auto",
@@ -57,6 +59,7 @@ def plot_image(
     show_axis: bool = False,
     is_jupyter: bool = False,
     return_canvas: bool = False,
+    figsize: tuple[int, int] = (8, 6),
 ) -> NDArray | None:
     """Plot a 3D array as an image.
 
@@ -67,13 +70,14 @@ def plot_image(
         show_axis (bool, optional): Whether to show the axis. Defaults to False.
         is_jupyter (bool, optional): Whether to display the plot in a Jupyter notebook. Defaults to False.
         return_canvas (bool, optional): Whether to return the canvas as a numpy array. Defaults to False.
+        figsize (tuple[int, int], optional): The size of the figure. Defaults to (8, 6).
 
     Returns:
         NDArray: The canvas as a numpy array if return_canvas is True, otherwise None.
     """
     assert data.ndim == 3, "Data must be a 3D array"
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figsize)
     ax.imshow(data)
     if not show_axis:
         ax.axis("off")
@@ -177,6 +181,7 @@ def plot_feature(
     is_jupyter: bool = False,
     return_canvas: bool = False,
     palette: ColorMapName | list[RGB] | None = "plasma",
+    figsize: tuple[int, int] = (8, 6),
 ) -> NDArray | None:
     """Plot a 2D feature map.
 
@@ -187,13 +192,14 @@ def plot_feature(
         is_jupyter (bool, optional): Whether to display the plot in a Jupyter notebook. Defaults to False.
         return_canvas (bool, optional): Whether to return the canvas as a numpy array. Defaults to False.
         palette (ColorMapName | list[RGB], optional): The colormap to use. Defaults to "plasma".
+        figsize (tuple[int, int], optional): The size of the figure. Defaults to (8, 6).
 
     Returns:
         NDArray: The canvas as a numpy array if return_canvas is True, otherwise None.
     """
     assert data.ndim == 2, "Data must be a 2D array"
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=figsize)
     cax = ax.imshow(
         data, cmap=create_palette(palette) if isinstance(palette, list) else palette
     )
@@ -302,6 +308,7 @@ def plot_scatter(
     is_jupyter: bool = False,
     return_canvas: bool = False,
     palette: ColorMapName | list[RGB] | None = "plasma",
+    figsize: tuple[int, int] = (10, 8),
 ) -> NDArray | None:
     """Plot a 2D scatter plot of the data.
 
@@ -313,6 +320,7 @@ def plot_scatter(
         is_jupyter (bool, optional): Whether to display the plot in a Jupyter notebook. Defaults to False.
         return_canvas (bool, optional): Whether to return the canvas as a numpy array. Defaults to False.
         palette (ColorMapName | list[RGB] | None, optional): Colormap to use for the plot. Defaults to "plasma".
+        figsize (tuple[int, int], optional): Figure size (width, height). Defaults to (10, 8).
 
     Returns:
         NDArray | None: The canvas as a numpy array if return_canvas is True, otherwise None.
@@ -320,7 +328,7 @@ def plot_scatter(
     assert data.ndim == 2, "Data must be a 2D array"
     assert data.shape[1] == 2, "Data must be 2D embedding (n_samples, 2)"
 
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=figsize)
     cmap = (
         create_palette(palette)
         if isinstance(palette, list)

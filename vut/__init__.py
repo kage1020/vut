@@ -1,5 +1,6 @@
 from matplotlib.colors import to_hex, to_rgb, to_rgba
 
+from .base import Base
 from .cuda import get_device, load_model, save_model
 from .io import (
     get_dirs,
@@ -16,11 +17,20 @@ from .io import (
     save_np,
     save_tensor,
 )
-from .mapping import to_class_index, to_class_name
+from .mapping import (
+    load_action_mapping,
+    load_class_mapping,
+    load_video_action_mapping,
+    load_video_boundaries,
+    load_video_boundaries_from_file,
+    to_class_index,
+    to_class_mapping,
+    to_class_name,
+)
 from .palette import RGB, ColorMapName, create_palette, template
 from .reduction import compute_tsne
 from .time import format_time, get_elapsed_time, get_time
-from .util import init_seed, to_list, to_np, to_tensor, unique
+from .util import Env, init_seed, to_list, to_np, to_tensor, unique
 from .visualize import (
     make_video,
     plot_action_segmentation,
@@ -35,11 +45,18 @@ from .visualize import (
 )
 
 __all__ = [
+    "Base",
     "ColorMapName",
     "compute_tsne",
     "create_palette",
+    "Env",
     "format_time",
     "init_seed",
+    "load_action_mapping",
+    "load_class_mapping",
+    "load_video_action_mapping",
+    "load_video_boundaries",
+    "load_video_boundaries_from_file",
     "load_file",
     "load_image",
     "load_images",
@@ -71,6 +88,7 @@ __all__ = [
     "save_tensor",
     "template",
     "to_class_index",
+    "to_class_mapping",
     "to_class_name",
     "to_hex",
     "to_list",

@@ -16,14 +16,17 @@
     "caplog",
     "cudnn",
     "dotenv",
+    "einops",
     "imread",
     "ipykernel",
+    "matplotlib",
     "ndarray",
     "numpy",
     "opencv",
     "pytest",
     "pythonpath",
-    "torchtyping"
+    "torchtyping",
+    "torchvision"
   ],
   "jupyter.notebookFileRoot": "${workspaceFolder}",
 }

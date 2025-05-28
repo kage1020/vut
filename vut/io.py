@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Any
 
 import cv2
 import numpy as np
@@ -126,15 +127,15 @@ def save_image(image: NDArray, path: str | Path) -> None:
     cv2.imwrite(str(path), image)
 
 
-def load_list(path: str | Path, callback=None) -> list:
+def load_list(path: str | Path, callback=None) -> list[str] | list[Any]:
     """Load a list from a file.
 
     Args:
         path (str | Path): Path to load the list from.
-        callback (callable, optional): A function to apply to each item after loading. Defaults to None.
+        callback (callable, optional): A function to apply to each item (string) after loading. Defaults to None.
 
     Returns:
-        list: Loaded list.
+        list: A list of strings loaded from the file. If callback is provided, the list will contain the results of applying the callback to each item.
     """
     with open(path, "r") as f:
         loaded_list = [line.strip() for line in f.readlines() if line.strip()]
