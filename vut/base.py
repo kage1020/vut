@@ -9,17 +9,17 @@ from vut.util import Env
 
 class Base:
     env = Env()
-    text_to_index: dict[str, int] = {}
-    index_to_text: dict[int, str] = {}
-    action_to_steps: dict[str, list[str]] = {}
-    video_to_action: dict[str, str] = {}
-    video_boundaries: dict[str, list[tuple[int, int]]] = {}
-    backgrounds: list[str] = []
+    text_to_index: dict[str, int]
+    index_to_text: dict[int, str]
+    action_to_steps: dict[str, list[str]]
+    video_to_action: dict[str, str]
+    video_boundaries: dict[str, list[tuple[int, int]]]
+    backgrounds: list[str]
 
     def __init__(
         self,
         class_mapping_path: str | None = None,
-        class_mapping_has_header: bool = None,
+        class_mapping_has_header: bool = False,
         class_mapping_separator: str | None = ",",
         action_mapping_path: str | None = None,
         action_mapping_has_header: bool = False,
@@ -41,6 +41,9 @@ class Base:
             )
             self.text_to_index = text_to_index
             self.index_to_text = index_to_text
+        else:
+            self.text_to_index = {}
+            self.index_to_text = {}
         if action_mapping_path is not None:
             action_to_steps = load_action_mapping(
                 action_mapping_path,
@@ -49,6 +52,8 @@ class Base:
                 step_separator=action_mapping_step_separator,
             )
             self.action_to_steps = action_to_steps
+        else:
+            self.action_to_steps = {}
         if video_action_mapping_path is not None:
             video_to_action = load_video_action_mapping(
                 video_action_mapping_path,
@@ -56,6 +61,8 @@ class Base:
                 separator=video_action_mapping_separator,
             )
             self.video_to_action = video_to_action
+        else:
+            self.video_to_action = {}
         if video_boundary_dir_path is not None:
             video_boundaries = load_video_boundaries(
                 video_boundary_dir_path,
@@ -63,5 +70,9 @@ class Base:
                 separator=video_boundary_separator,
             )
             self.video_boundaries = video_boundaries
+        else:
+            self.video_boundaries = {}
         if backgrounds is not None:
             self.backgrounds = backgrounds
+        else:
+            self.backgrounds = []

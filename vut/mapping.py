@@ -68,11 +68,11 @@ def to_class_mapping(x: list[tuple[int, str]]) -> tuple[dict[int, str], dict[str
             - text_to_index: Mapping from class names to class indices.
             - index_to_text: Mapping from class indices to class names.
     """
-    index_to_text = {}
     text_to_index = {}
+    index_to_text = {}
     for i, text in x:
-        index_to_text[i] = text
         text_to_index[text] = i
+        index_to_text[i] = text
     return text_to_index, index_to_text
 
 
@@ -125,11 +125,11 @@ def load_action_mapping(
     """Load action mapping from a csv-like file.
     Format should be:
     ```
-    <action_index><action_separator><step_name><step_separator><step_name>...
-    <action_index><action_separator><step_name><step_separator><step_name>...
+    <action_name><action_separator><step_name><step_separator><step_name>...
+    <action_name><action_separator><step_name><step_separator><step_name>...
     ...
     ```
-    where <action_index> is an integer and <step_name> is a string.
+    where <action_name> is a string and <step_name> is a string.
 
     Args:
         path (str | Path): Path to the action mapping file.
@@ -150,10 +150,6 @@ def load_action_mapping(
     assert len(lines[0]) == 2, (
         f"Invalid format in file: {path}. Expected format: <index>{action_separator}<action_name>"
     )
-    try:
-        lines = [(int(line[0]), line[1]) for line in lines]
-    except ValueError:
-        raise ValueError(f"Invalid format in file: {path}. index must be an integer.")
     mapping = {}
     for line in lines:
         index, action = line
