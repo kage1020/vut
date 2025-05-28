@@ -51,7 +51,7 @@ def video_boundary_dir():
     os.rmdir(temp_dir)
 
 
-def test_base__init_with_all_parameters(
+def test_base(
     class_mapping_file,
     action_mapping_file,
     video_action_mapping_file,
@@ -72,9 +72,9 @@ def test_base__init_with_all_parameters(
     assert base.index_to_text == {0: "cat", 1: "dog", 2: "bird"}
 
     expected_action_to_steps = {
-        0: ["walk", "run", "jump"],
-        1: ["sit", "down", "stay"],
-        2: ["eat", "drink"],
+        "0": ["walk", "run", "jump"],
+        "1": ["sit", "down", "stay"],
+        "2": ["eat", "drink"],
     }
     assert base.action_to_steps == expected_action_to_steps
 

@@ -159,20 +159,20 @@ def test_to_class_index__invalid_shape():
 
 def test_to_class_mapping():
     data = [(0, "cat"), (1, "dog"), (2, "bird")]
-    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
     expected_text_to_index = {"cat": 0, "dog": 1, "bird": 2}
-    index_to_text, text_to_index = to_class_mapping(data)
-    assert index_to_text == expected_index_to_text
+    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
+    text_to_index, index_to_text = to_class_mapping(data)
     assert text_to_index == expected_text_to_index
+    assert index_to_text == expected_index_to_text
 
 
 def test_to_class_mapping__empty():
     data = []
-    expected_index_to_text = {}
     expected_text_to_index = {}
-    index_to_text, text_to_index = to_class_mapping(data)
-    assert index_to_text == expected_index_to_text
+    expected_index_to_text = {}
+    text_to_index, index_to_text = to_class_mapping(data)
     assert text_to_index == expected_text_to_index
+    assert index_to_text == expected_index_to_text
 
 
 @pytest.fixture
@@ -196,21 +196,21 @@ def class_mapping_file_with_header():
 
 
 def test_load_class_mapping(class_mapping_file):
-    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
     expected_text_to_index = {"cat": 0, "dog": 1, "bird": 2}
-    index_to_text, text_to_index = load_class_mapping(class_mapping_file)
-    assert index_to_text == expected_index_to_text
+    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
+    text_to_index, index_to_text = load_class_mapping(class_mapping_file)
     assert text_to_index == expected_text_to_index
+    assert index_to_text == expected_index_to_text
 
 
 def test_load_class_mapping__with_header(class_mapping_file_with_header):
-    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
     expected_text_to_index = {"cat": 0, "dog": 1, "bird": 2}
-    index_to_text, text_to_index = load_class_mapping(
+    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
+    text_to_index, index_to_text = load_class_mapping(
         class_mapping_file_with_header, has_header=True
     )
-    assert index_to_text == expected_index_to_text
     assert text_to_index == expected_text_to_index
+    assert index_to_text == expected_index_to_text
 
 
 def test_load_class_mapping__file_not_found():
@@ -230,8 +230,8 @@ def action_mapping_file():
 
 def test_load_action_mapping(action_mapping_file):
     expected_mapping = {
-        0: ["action_a", "step_a1", "step_a2"],
-        1: ["action_b", "step_b1"],
+        "0": ["action_a", "step_a1", "step_a2"],
+        "1": ["action_b", "step_b1"],
     }
     mapping = load_action_mapping(action_mapping_file, step_separator=" ")
     assert mapping == expected_mapping
