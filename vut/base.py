@@ -68,7 +68,7 @@ class Base[T: Config]:
             self.video_boundaries = video_boundaries
         else:
             self.video_boundaries = {}
-        if self.cfg.dataset.backgrounds is not None:
+        if self.cfg.dataset.backgrounds:
             self.backgrounds = to_class_index(
                 self.cfg.dataset.backgrounds, self.text_to_index
             )

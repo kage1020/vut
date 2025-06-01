@@ -11,7 +11,7 @@ from vut.io import load_list, load_np
 
 class BaseDataset[T: Config](Dataset, Base[T]):
     def __init__(self, cfg: T, name: str = "BaseDataset"):
-        super(Dataset, self).__init__(name, cfg)
+        super().__init__(name, cfg)
         self.cfg = cfg
         self.feature_paths = self._get_feature_paths()
 

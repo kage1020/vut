@@ -7,7 +7,7 @@ from vut.config import Config
 
 class NoopDataset[T: Config](Dataset, Base[T]):
     def __init__(self, cfg: T, name: str = "NoopDataset"):
-        super(Dataset, self).__init__(name, cfg)
+        super().__init__(name, cfg)
 
     def __len__(self):
         return 0
