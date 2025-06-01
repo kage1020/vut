@@ -1,6 +1,7 @@
 from matplotlib.colors import to_hex, to_rgb, to_rgba
 
 from .base import Base
+from .config import BaseConfig, Config, DatasetConfig, ModelConfig, TrainingConfig
 from .cuda import get_device, load_model, save_model
 from .io import (
     get_dirs,
@@ -46,11 +47,19 @@ from .visualize import (
 
 __all__ = [
     "Base",
+    "BaseConfig",
     "ColorMapName",
     "compute_tsne",
+    "Config",
     "create_palette",
+    "DatasetConfig",
     "Env",
     "format_time",
+    "get_device",
+    "get_dirs",
+    "get_images",
+    "get_time",
+    "get_elapsed_time",
     "init_seed",
     "load_action_mapping",
     "load_class_mapping",
@@ -64,12 +73,8 @@ __all__ = [
     "load_model",
     "load_np",
     "load_tensor",
-    "get_device",
-    "get_dirs",
-    "get_images",
-    "get_time",
-    "get_elapsed_time",
     "make_video",
+    "ModelConfig",
     "plot_action_segmentation",
     "plot_feature",
     "plot_features",
@@ -96,5 +101,6 @@ __all__ = [
     "to_rgb",
     "to_rgba",
     "to_tensor",
+    "TrainingConfig",
     "unique",
 ]

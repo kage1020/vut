@@ -33,7 +33,6 @@ class DatasetConfig(BaseConfig):
     backgrounds: list[str] = field(default_factory=list)
     input_dim: int = 0
 
-    base_dir: str = None
     split_dir: str = None
     split_file_name: str = None
     gt_dir: str = None
@@ -56,6 +55,7 @@ class DatasetConfig(BaseConfig):
 
 @dataclass
 class TrainingConfig(BaseConfig):
+    epochs: int = 100
     split: int = 0
     num_fold: int = 0
     lr: float = 0.001
@@ -73,6 +73,10 @@ class VisualizationConfig(BaseConfig):
 class Config(BaseConfig):
     seed: int = 42
     device: str = "cuda"
+    result_dir: str = "results"
+    val_skip: bool = False
+    model_dir: str = "models"
+    model_file_name: str = "model.pth"
 
     model: ModelConfig = field(default_factory=lambda: ModelConfig(name="none"))
     dataset: DatasetConfig = field(default_factory=lambda: DatasetConfig(name="none"))

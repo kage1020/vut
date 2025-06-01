@@ -76,10 +76,10 @@ def save_list(lst: list, path: str | Path, callback=None) -> None:
         path (str | Path): Path to save the list.
         callback (callable, optional): A function to apply to each item before saving. Defaults to None.
     """
-    if callback is not None:
-        lst = [callback(item) for item in lst]
     with open(path, "w") as f:
-        f.writelines(f"{item}\n" for item in lst)
+        f.writelines(
+            f"{callback(item) if callback is not None else item}\n" for item in lst
+        )
 
 
 def save_np(arr: NDArray, path: str | Path) -> None:
@@ -138,9 +138,10 @@ def load_list(path: str | Path, callback=None) -> list[str] | list[Any]:
         list: A list of strings loaded from the file. If callback is provided, the list will contain the results of applying the callback to each item.
     """
     with open(path, "r") as f:
-        loaded_list = [line.strip() for line in f.readlines() if line.strip()]
-    if callback is not None:
-        loaded_list = [callback(item) for item in loaded_list]
+        if callback is not None:
+            loaded_list = [callback(line) for line in f.readlines()]
+        else:
+            loaded_list = [line.strip() for line in f.readlines() if line.strip()]
     return loaded_list
 
 

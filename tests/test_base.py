@@ -75,14 +75,12 @@ def test_base(
                 "video_boundary_dir_path": video_boundary_dir,
                 "video_boundary_has_header": False,
                 "video_boundary_separator": ",",
+                "backgrounds": backgrounds,
             },
         }
     )
 
-    base = Base(
-        cfg=cfg,
-        backgrounds=backgrounds,
-    )
+    base = Base(cfg=cfg)
 
     assert base.text_to_index == {"cat": 0, "dog": 1, "bird": 2}
     assert base.index_to_text == {0: "cat", 1: "dog", 2: "bird"}

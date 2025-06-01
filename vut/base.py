@@ -18,14 +18,12 @@ class Base[T: Config]:
         self,
         name: str = "Base",
         cfg: T | None = None,
-        backgrounds: list[str] | None = None,
     ):
         """Initialize the Base class.
 
         Args:
             name (str, optional): Name of the base class. Defaults to "Base".
             cfg (T | None, optional): Configuration object. Defaults to None.
-            backgrounds (list[str] | None, optional): List of background classes. Defaults to None.
         """
         init_seed(cfg.seed if cfg is not None else 42)
         self.logger = get_logger(name)
@@ -70,7 +68,9 @@ class Base[T: Config]:
             self.video_boundaries = video_boundaries
         else:
             self.video_boundaries = {}
-        if backgrounds is not None:
-            self.backgrounds = to_class_index(backgrounds, self.text_to_index)
+        if self.cfg.dataset.backgrounds is not None:
+            self.backgrounds = to_class_index(
+                self.cfg.dataset.backgrounds, self.text_to_index
+            )
         else:
             self.backgrounds = []
