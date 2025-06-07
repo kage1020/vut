@@ -20,6 +20,7 @@
     "imread",
     "ipykernel",
     "matplotlib",
+    "ncols",
     "ndarray",
     "numpy",
     "opencv",

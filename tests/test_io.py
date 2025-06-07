@@ -82,7 +82,7 @@ def test_get_images__not_a_directory():
     os.remove(temp_file_path)
 
 
-def test_save_list_with_callback():
+def test_save_list__with_callback():
     data = [1, 2, 3]
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
         file_path = temp_file.name
@@ -147,12 +147,12 @@ def test_load_list():
     os.remove(file_path)
 
 
-def test_load_list_with_callback():
+def test_load_list__with_callback():
     data = [1, 2, 3]
     with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
         file_path = temp_file.name
         temp_file.writelines(f"{item}\n" for item in data)
-    loaded_data = load_list(file_path, callback=int)
+    loaded_data = load_list(file_path, callback=lambda x: int(x.strip()))
     assert loaded_data == data, "Loaded data should match the original list"
     os.remove(file_path)
 

@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest
 
 from vut.base import Base
+from vut.config import Config
 
 
 @pytest.fixture
@@ -57,16 +58,29 @@ def test_base(
     video_action_mapping_file,
     video_boundary_dir,
 ):
-    backgrounds = ["bg1", "bg2"]
-
-    base = Base(
-        class_mapping_path=class_mapping_file,
-        class_mapping_has_header=True,
-        action_mapping_path=action_mapping_file,
-        video_action_mapping_path=video_action_mapping_file,
-        video_boundary_dir_path=video_boundary_dir,
-        backgrounds=backgrounds,
+    backgrounds = ["cat"]
+    cfg = Config.from_dict(
+        {
+            "dataset": {
+                "name": "test_dataset",
+                "class_mapping_path": class_mapping_file,
+                "class_mapping_has_header": True,
+                "class_mapping_separator": ",",
+                "action_mapping_path": action_mapping_file,
+                "action_mapping_has_header": False,
+                "action_mapping_action_separator": ",",
+                "video_action_mapping_path": video_action_mapping_file,
+                "video_action_mapping_has_header": False,
+                "video_action_mapping_separator": ",",
+                "video_boundary_dir_path": video_boundary_dir,
+                "video_boundary_has_header": False,
+                "video_boundary_separator": ",",
+                "backgrounds": backgrounds,
+            },
+        }
     )
+
+    base = Base(cfg=cfg)
 
     assert base.text_to_index == {"cat": 0, "dog": 1, "bird": 2}
     assert base.index_to_text == {0: "cat", 1: "dog", 2: "bird"}
@@ -91,7 +105,7 @@ def test_base(
     }
     assert base.video_boundaries == expected_video_boundaries
 
-    assert base.backgrounds == backgrounds
+    assert base.backgrounds == [0]
 
 
 def test_base__env_access():
@@ -121,17 +135,25 @@ def test_base__env_access():
 
 
 def test_base__init_with_custom_separator():
-    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".csv") as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
         f.write("0|cat\n1|dog\n2|bird\n")
         file_path = f.name
 
-    try:
-        base = Base(class_mapping_path=file_path, class_mapping_separator="|")
+    cfg = Config.from_dict(
+        {
+            "dataset": {
+                "name": "test_dataset",
+                "class_mapping_path": file_path,
+                "class_mapping_has_header": False,
+                "class_mapping_separator": "|",
+            }
+        }
+    )
+    base = Base(cfg=cfg)
 
-        expected_text_to_index = {"cat": 0, "dog": 1, "bird": 2}
-        expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
+    expected_text_to_index = {"cat": 0, "dog": 1, "bird": 2}
+    expected_index_to_text = {0: "cat", 1: "dog", 2: "bird"}
 
-        assert base.text_to_index == expected_text_to_index
-        assert base.index_to_text == expected_index_to_text
-    finally:
-        os.remove(file_path)
+    assert base.text_to_index == expected_text_to_index
+    assert base.index_to_text == expected_index_to_text
+    os.remove(file_path)
