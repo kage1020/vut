@@ -2005,7 +2005,7 @@ wheels = [
 
 [[package]]
 name = "vut"
-version = "0.1.6"
+version = "0.1.8"
 source = { virtual = "." }
 dependencies = [
     { name = "einops" },

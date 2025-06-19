@@ -6,6 +6,8 @@ import torch
 from numpy.typing import NDArray
 from torch import Tensor
 
+type Segment = tuple[int, tuple[int, int]]
+
 
 def init_seed(seed: int = 42) -> None:
     """Initialize the random seed for reproducibility.
@@ -122,6 +124,49 @@ def to_tensor(x: list | NDArray | Tensor) -> Tensor:
     raise TypeError(
         f"Unsupported type: {type(x)}. Supported types are list, NDArray, and Tensor."
     )
+
+
+def to_segments(
+    x: list[int] | NDArray | Tensor, backgrounds: list[int] | NDArray | Tensor
+) -> list[Segment]:
+    """Convert input to segments.
+
+    Args:
+        x (list[int] | NDArray | Tensor): Input to convert.
+        backgrounds (list[int] | NDArray | Tensor): Background segments.
+
+    Returns:
+        list[Segment]: Converted segments. Each segment is a tuple of (value, (start_index, end_index)). Range is [start_index, end_index).
+    """
+    _x = to_np(x)
+    if len(_x) == 0:
+        return []
+    diff = np.flatnonzero(np.diff(_x, prepend=_x[0] - 1))
+    indices = np.append(diff, len(_x))
+    _backgrounds = to_np(backgrounds)
+
+    segments = []
+    for start, end in zip(indices[:-1], indices[1:]):
+        value = _x[start]
+        if value not in _backgrounds:
+            segments.append((int(value), (int(start), int(end))))
+
+    return segments
+
+
+def to_frames(x: list[Segment]) -> list[int]:
+    """Convert segments to frame indices.
+
+    Args:
+        x (list[Segment]): List of segments, where each segment is a tuple of (value, (start_index, end_index)).
+
+    Returns:
+        list[int]: List of frame indices corresponding to the segments.
+    """
+    frames = []
+    for value, (start, end) in x:
+        frames.extend([value] * (end - start))
+    return frames
 
 
 class Env:

@@ -13,6 +13,9 @@
   <a href="https://codecov.io/gh/kage1020/vut" >
    <img src="https://codecov.io/gh/kage1020/vut/graph/badge.svg?token=XWNCMG995B"/>
   </a>
+  <a href="https://deepwiki.com/kage1020/vut">
+    <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki">
+  </a>
 </p>
 
 
