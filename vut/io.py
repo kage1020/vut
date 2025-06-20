@@ -201,7 +201,7 @@ def load_files(path: str | Path, callback=None) -> list[list[str]]:
     Returns:
         list[str]: List of lines from all text files in the directory.
     """
-    files = list(path.glob("*"))
+    files = list(Path(path).glob("*"))
     return [load_lines(file, callback) for file in files]
 
 
