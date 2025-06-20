@@ -36,7 +36,7 @@ def load_model(
     device: torch.device | Literal["cpu", "cuda"] = "cpu",
     logger=None,
     strict: bool = True,
-):
+) -> Module:
     """Load a model from a given path.
 
     Args:
@@ -64,7 +64,7 @@ def load_model(
     return model
 
 
-def save_model(model: Module, model_path: str | Path):
+def save_model(model: Module, model_path: str | Path) -> None:
     """Save the model to the specified path.
 
     Args:
