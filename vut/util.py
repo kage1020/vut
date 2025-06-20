@@ -143,13 +143,13 @@ def to_segments(
         return []
     diff = np.flatnonzero(np.diff(_x, prepend=_x[0] - 1))
     indices = np.append(diff, len(_x))
-    _backgrounds = to_np(backgrounds)
+    _backgrounds = set(to_list(backgrounds))
 
     segments = []
     for start, end in zip(indices[:-1], indices[1:]):
-        value = _x[start]
+        value = int(_x[start])
         if value not in _backgrounds:
-            segments.append((int(value), (int(start), int(end))))
+            segments.append((value, (int(start), int(end))))
 
     return segments
 
