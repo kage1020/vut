@@ -163,6 +163,17 @@ def test_env(mocker: MockerFixture):
     assert env("VUT_ENV") == "test_env", "Should return the value of VUT_ENV"
 
 
+def test_env__dotenv_loading(tmp_path):
+    env_file = tmp_path / ".env"
+    env_file.write_text("TEST_VAR=dotenv_value\nTEST_BOOL=true\nTEST_INT=100\n")
+
+    env = Env(str(env_file))
+
+    assert env("TEST_VAR") == "dotenv_value", "Should load variable from .env file"
+    assert env.bool("TEST_BOOL") is True, "Should load boolean from .env file"
+    assert env.int("TEST_INT") == 100, "Should load integer from .env file"
+
+
 def test_env_bool(mocker: MockerFixture):
     mocker.patch.dict(os.environ, {"VUT_ENV": "True"})
     env = Env()

@@ -10,6 +10,7 @@ import torch
 from vut.io import (
     get_dirs,
     get_images,
+    load_file,
     load_files,
     load_image,
     load_images,
@@ -292,8 +293,14 @@ def test_load_files():
 
         result = load_files(temp_path)
 
-        assert isinstance(result, list), "Result should be a list"
+        assert isinstance(result, dict), "Result should be a dictionary"
         assert len(result) == 2, "Should have results for 2 files"
+        assert "file1.txt" in result, "Should contain file1.txt as key"
+        assert "file2.txt" in result, "Should contain file2.txt as key"
+        assert result["file1.txt"] == ["line1", "line2", "line3"], (
+            "Content should match"
+        )
+        assert result["file2.txt"] == ["hello", "world"], "Content should match"
 
 
 def test_load_files__with_callback():
@@ -306,8 +313,12 @@ def test_load_files__with_callback():
 
         result = load_files(temp_path, callback=lambda x: int(x.strip()))
 
+        assert isinstance(result, dict), "Result should be a dictionary"
         assert len(result) == 1, "Should have results for 1 file"
-        assert result[0] == [1, 2, 3], "Callback should convert strings to integers"
+        assert "numbers.txt" in result, "Should contain numbers.txt as key"
+        assert result["numbers.txt"] == [1, 2, 3], (
+            "Callback should convert strings to integers"
+        )
 
 
 def test_load_files__empty_directory():
@@ -316,7 +327,8 @@ def test_load_files__empty_directory():
 
         result = load_files(temp_path)
 
-        assert result == [], "Empty directory should return empty list"
+        assert isinstance(result, dict), "Result should be a dictionary"
+        assert result == {}, "Empty directory should return empty dictionary"
 
 
 def test_load_files__mixed_file_types():
@@ -334,8 +346,24 @@ def test_load_files__mixed_file_types():
 
         try:
             result = load_files(temp_path)
-            assert isinstance(result, list), (
-                "Should return a list even with mixed file types"
+            assert isinstance(result, dict), (
+                "Should return a dictionary even with mixed file types"
             )
+            assert "text.txt" in result, "Should contain text file"
+            assert "binary.bin" in result, "Should contain binary file"
         except UnicodeDecodeError:
             pytest.skip("Binary file caused UnicodeDecodeError as expected")
+
+
+def test_load_file():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        file1 = temp_path / "test.txt"
+        with open(file1, "w") as f:
+            f.write("line1\nline2\nline3\n")
+
+        result = load_file(file1)
+
+        assert isinstance(result, list), "Result should be a list"
+        assert result == ["line1", "line2", "line3"], "Content should match"

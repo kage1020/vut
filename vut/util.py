@@ -1,8 +1,10 @@
 import os
 import random
+from pathlib import Path
 
 import numpy as np
 import torch
+from dotenv import load_dotenv
 from numpy.typing import NDArray
 from torch import Tensor
 
@@ -170,6 +172,15 @@ def to_frames(x: list[Segment]) -> list[int]:
 
 
 class Env:
+    def __init__(self, dotenv_path: str | Path | None = None) -> None:
+        """Initialize the Env class and load environment variables from .env file.
+
+        Args:
+            dotenv_path (str | Path | None, optional): Path to the .env file.
+                If None, will look for .env in the current directory. Defaults to None.
+        """
+        load_dotenv(dotenv_path)
+
     def __call__(self, name: str) -> str:
         """Get the value of an environment variable.
 
