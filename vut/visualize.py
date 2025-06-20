@@ -109,6 +109,7 @@ def plot_images(
     return_canvas: bool = False,
     ncols: int = None,
     nrows: int = None,
+    figsize: tuple[int, int] | None = None,
 ) -> list[NDArray] | None:
     """Plot a list of 3D arrays as images.
 
@@ -121,6 +122,7 @@ def plot_images(
         return_canvas (bool, optional): Whether to return the canvases as numpy arrays. Defaults to False.
         ncols (int, optional): Number of columns in the grid layout. Defaults to None.
         nrows (int, optional): Number of rows in the grid layout. Defaults to None.
+        figsize (tuple[int, int] | None, optional): The size of the figure. If None, defaults to (ncols * 5, nrows * 5). Defaults to None.
 
     Returns:
         list[NDArray]: List of canvases as numpy arrays if return_canvas is True, otherwise None.
@@ -151,7 +153,9 @@ def plot_images(
     )
 
     canvases = []
-    fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=(ncols * 3, nrows * 3))
+    if figsize is None:
+        figsize = (ncols * 5, nrows * 5)
+    fig, axs = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     axs = axs.flatten() if nrows > 1 or ncols > 1 else [axs]
     for i, (ax, img, path) in enumerate(zip(axs, data, paths)):
         ax.imshow(img)
@@ -232,6 +236,7 @@ def plot_features(
     ncols: int = None,
     nrows: int = None,
     palette: ColorMapName | list[RGB] | None = "plasma",
+    figsize: tuple[int, int] | None = None,
 ) -> list[NDArray] | None:
     """Plot a list of 2D feature maps.
 
@@ -244,6 +249,7 @@ def plot_features(
         ncols (int, optional): Number of columns in the grid layout. Defaults to None.
         nrows (int, optional): Number of rows in the grid layout. Defaults to None.
         palette (ColorMapName | list[RGB], optional): The colormap to use. Defaults to "plasma".
+        figsize (tuple[int, int] | None, optional): The size of the figure. If None, defaults to (ncols * 5, nrows * 5). Defaults to None.
 
     Returns:
         list[NDArray]: List of canvases as numpy arrays if return_canvas is True, otherwise None.
@@ -271,10 +277,15 @@ def plot_features(
         nrows = int(np.ceil(num_features / ncols))
 
     canvases = []
+    if figsize is None:
+        if nrows and ncols:
+            figsize = (ncols * 5, nrows * 5)
+        else:
+            figsize = (len(data) * 5, 5)
     fig, axs = plt.subplots(
         nrows=nrows if nrows is not None else 1,
         ncols=ncols if ncols is not None else len(data),
-        figsize=(ncols * 3, nrows * 3) if nrows and ncols else (len(data) * 3, 3),
+        figsize=figsize,
     )
     axs = axs.flatten() if nrows > 1 or ncols > 1 else [axs]
     for i, (ax, img, path) in enumerate(zip(axs, data, paths)):
@@ -372,8 +383,8 @@ def plot_metrics(
     metrics: dict[str, NDArray | list[int] | list[float]],
     path: str | Path = "metrics.png",
     title: str | None = None,
-    xlabel: str = "Epoch",
-    ylabel: str = "Value",
+    x_label: str = "Epoch",
+    y_label: str = "Value",
     is_jupyter: bool = False,
     return_canvas: bool = False,
     figsize: tuple[int, int] = (10, 6),
@@ -384,8 +395,8 @@ def plot_metrics(
         metrics (dict[str, NDArray | list[int] | list[float]]): Dictionary where keys are metric names and values are metric data.
         path (str | Path, optional): File path to save the plot. Defaults to "metrics.png".
         title (str | None, optional): Title of the plot. Defaults to None.
-        xlabel (str, optional): Label for the x-axis. Defaults to "Epoch".
-        ylabel (str, optional): Label for the y-axis. Defaults to "Value".
+        x_label (str, optional): Label for the x-axis. Defaults to "Epoch".
+        y_label (str, optional): Label for the y-axis. Defaults to "Value".
         is_jupyter (bool, optional): Whether to display the plot in a Jupyter notebook. Defaults to False.
         return_canvas (bool, optional): Whether to return the canvas as a numpy array. Defaults to False.
         figsize (tuple[int, int], optional): Figure size (width, height). Defaults to (10, 6).
@@ -403,8 +414,8 @@ def plot_metrics(
         x = np.arange(len(data))
         ax.plot(x, data, label=name)
 
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
     ax.legend()
     ax.grid(True, alpha=0.3)
 

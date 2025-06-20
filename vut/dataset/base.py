@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from vut.base import Base
 from vut.config import Config
-from vut.io import load_list, load_np
+from vut.io import load_lines, load_np
 
 
 class BaseDataset[T: Config](Dataset, Base[T]):
@@ -19,7 +19,7 @@ class BaseDataset[T: Config](Dataset, Base[T]):
         split_file_path = (
             f"{self.cfg.dataset.split_dir}/{self.cfg.dataset.split_file_name}"
         )
-        feature_paths: list[Path] = load_list(
+        feature_paths: list[Path] = load_lines(
             split_file_path, lambda path: Path(path.strip())
         )
         self.logger.info(
@@ -37,7 +37,7 @@ class BaseDataset[T: Config](Dataset, Base[T]):
         gt_file = gt_dir / feature_path.with_suffix(".txt").name
         if not gt_file.exists():
             raise FileNotFoundError(f"Ground truth file {gt_file} not found.")
-        gt: list[int] = load_list(
+        gt: list[int] = load_lines(
             gt_file, lambda item: self.text_to_index.get(item.strip(), -1)
         )
         return torch.tensor(gt)
