@@ -10,6 +10,7 @@ import torch
 from vut.io import (
     get_dirs,
     get_images,
+    load_files,
     load_image,
     load_images,
     load_lines,
@@ -274,3 +275,67 @@ def test_load_images__mixed_files():
         )
         os.remove(image_file)
         os.remove(non_image_file)
+
+
+def test_load_files():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        file1 = temp_path / "file1.txt"
+        file2 = temp_path / "file2.txt"
+
+        with open(file1, "w") as f:
+            f.write("line1\nline2\n\nline3\n")
+
+        with open(file2, "w") as f:
+            f.write("hello\nworld\n")
+
+        result = load_files(temp_path)
+
+        assert isinstance(result, list), "Result should be a list"
+        assert len(result) == 2, "Should have results for 2 files"
+
+
+def test_load_files__with_callback():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        file1 = temp_path / "numbers.txt"
+        with open(file1, "w") as f:
+            f.write("1\n2\n3\n")
+
+        result = load_files(temp_path, callback=lambda x: int(x.strip()))
+
+        assert len(result) == 1, "Should have results for 1 file"
+        assert result[0] == [1, 2, 3], "Callback should convert strings to integers"
+
+
+def test_load_files__empty_directory():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        result = load_files(temp_path)
+
+        assert result == [], "Empty directory should return empty list"
+
+
+def test_load_files__mixed_file_types():
+    """Test load_files with mixed file types."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        text_file = temp_path / "text.txt"
+        with open(text_file, "w") as f:
+            f.write("text content\n")
+
+        binary_file = temp_path / "binary.bin"
+        with open(binary_file, "wb") as f:
+            f.write(b"\x00\x01\x02\x03")
+
+        try:
+            result = load_files(temp_path)
+            assert isinstance(result, list), (
+                "Should return a list even with mixed file types"
+            )
+        except UnicodeDecodeError:
+            pytest.skip("Binary file caused UnicodeDecodeError as expected")

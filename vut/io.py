@@ -191,6 +191,20 @@ def load_file(path: str | Path) -> list[str]:
     return load_lines(path)
 
 
+def load_files(path: str | Path, callback=None) -> list[list[str]]:
+    """Load multiple text files and return their contents as a list of lines.
+
+    Args:
+        path (str | Path): Path to the directory containing text files.
+        callback (callable, optional): A function to apply to each line after loading. Defaults to None.
+
+    Returns:
+        list[str]: List of lines from all text files in the directory.
+    """
+    files = list(path.glob("*"))
+    return [load_lines(file, callback) for file in files]
+
+
 def load_image(path: str | Path) -> NDArray:
     """Load an image from a file.
 

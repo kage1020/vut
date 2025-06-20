@@ -5,7 +5,7 @@ import torch
 from numpy.typing import NDArray
 from torch import Tensor
 
-from vut.io import load_list
+from vut.io import load_lines
 
 
 def to_class_name(
@@ -101,7 +101,7 @@ def load_class_mapping(
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
-    lines = load_list(path)
+    lines = load_lines(path)
     if has_header:
         lines = lines[1:]
     lines = [line.split(separator) for line in lines]
@@ -144,7 +144,7 @@ def load_action_mapping(
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
-    lines = load_list(path)
+    lines = load_lines(path)
     if has_header:
         lines = lines[1:]
     lines = [line.split(action_separator) for line in lines]
@@ -184,7 +184,7 @@ def load_video_action_mapping(
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
-    lines = load_list(path)
+    lines = load_lines(path)
     if has_header:
         lines = lines[1:]
     lines = [line.split(separator) for line in lines]
@@ -216,7 +216,7 @@ def load_video_boundaries_from_file(
     file_path = Path(file_path)
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
-    lines = load_list(file_path)
+    lines = load_lines(file_path)
     if has_header:
         lines = lines[1:]
     lines = [line.split(separator) for line in lines]
