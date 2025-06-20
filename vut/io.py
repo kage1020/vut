@@ -1,4 +1,5 @@
 import os
+import warnings
 from pathlib import Path
 from typing import Any
 
@@ -127,15 +128,15 @@ def save_image(image: NDArray, path: str | Path) -> None:
     cv2.imwrite(str(path), image)
 
 
-def load_list(path: str | Path, callback=None) -> list[str] | list[Any]:
-    """Load a list from a file.
+def load_lines(path: str | Path, callback=None) -> list[str] | list[Any]:
+    """Load lines from a text file.
 
     Args:
-        path (str | Path): Path to load the list from.
-        callback (callable, optional): A function to apply to each item (string) after loading. Defaults to None.
+        path (str | Path): Path to load the file from.
+        callback (callable, optional): A function to apply to each line after loading. Defaults to None.
 
     Returns:
-        list: A list of strings loaded from the file. If callback is provided, the list will contain the results of applying the callback to each item.
+        list: A list of strings loaded from the file. If callback is provided, the list will contain the results of applying the callback to each line.
     """
     with open(path, "r") as f:
         if callback is not None:
@@ -172,14 +173,22 @@ def load_tensor(path: str | Path) -> Tensor:
 def load_file(path: str | Path) -> list[str]:
     """Load a text file and return its contents as a list of lines.
 
+    .. deprecated:: 0.2.0
+        `load_file` is deprecated and will be removed in v0.3.0.
+        Use `load_lines` instead.
+
     Args:
         path (str | Path): Path to the text file.
 
     Returns:
         list[str]: List of lines in the text file.
     """
-    with open(path, "r") as f:
-        return [line.strip() for line in f.readlines() if line.strip()]
+    warnings.warn(
+        "load_file is deprecated and will be removed in v0.3.0. Use load_lines instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return load_lines(path)
 
 
 def load_image(path: str | Path) -> NDArray:
@@ -204,3 +213,25 @@ def load_images(paths: list[str | Path]) -> list[NDArray]:
         list[NDArray]: List of loaded images as numpy arrays.
     """
     return [load_image(path) for path in paths]
+
+
+def load_list(path: str | Path, callback=None) -> list[str] | list[Any]:
+    """Load a list from a file.
+
+    .. deprecated:: 0.2.0
+        `load_list` is deprecated and will be removed in v0.3.0.
+        Use `load_lines` instead.
+
+    Args:
+        path (str | Path): Path to load the list from.
+        callback (callable, optional): A function to apply to each item (string) after loading. Defaults to None.
+
+    Returns:
+        list: A list of strings loaded from the file. If callback is provided, the list will contain the results of applying the callback to each item.
+    """
+    warnings.warn(
+        "load_list is deprecated and will be removed in v0.3.0. Use load_lines instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return load_lines(path, callback)

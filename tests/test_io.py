@@ -10,10 +10,9 @@ import torch
 from vut.io import (
     get_dirs,
     get_images,
-    load_file,
     load_image,
     load_images,
-    load_list,
+    load_lines,
     load_np,
     load_tensor,
     save,
@@ -135,25 +134,56 @@ def test_save_image():
     assert loaded_data is not None, "Loaded image should not be None"
 
 
-def test_load_list():
+def test_load_lines():
     data = [1, 2, 3]
     with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
         file_path = temp_file.name
         temp_file.writelines(f"{item}\n" for item in data)
-    loaded_data = load_list(file_path)
+    loaded_data = load_lines(file_path)
     assert loaded_data == [str(i) for i in data], (
         "Loaded data should match the original list"
     )
     os.remove(file_path)
 
 
-def test_load_list__with_callback():
+def test_load_lines__with_callback():
     data = [1, 2, 3]
     with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
         file_path = temp_file.name
         temp_file.writelines(f"{item}\n" for item in data)
-    loaded_data = load_list(file_path, callback=lambda x: int(x.strip()))
+    loaded_data = load_lines(file_path, callback=lambda x: int(x.strip()))
     assert loaded_data == data, "Loaded data should match the original list"
+    os.remove(file_path)
+
+
+def test_load_lines__not_a_file():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        with pytest.raises(IsADirectoryError):
+            load_lines(temp_dir)
+
+
+def test_load_lines__non_existent_file():
+    with tempfile.TemporaryDirectory() as temp_dir:
+        file_path = Path(temp_dir) / "non_existent.txt"
+        with pytest.raises(FileNotFoundError):
+            load_lines(file_path)
+
+
+def test_load_lines__empty_file():
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
+        file_path = temp_file.name
+    loaded_data = load_lines(file_path)
+    assert loaded_data == [], "Empty file should return empty list"
+    os.remove(file_path)
+
+
+def test_load_lines__with_empty_lines():
+    data = ["line1", "", "line3", ""]
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
+        file_path = temp_file.name
+        temp_file.writelines(f"{line}\n" for line in data)
+    loaded_data = load_lines(file_path)
+    assert loaded_data == ["line1", "line3"], "Empty lines should be filtered out"
     os.remove(file_path)
 
 
@@ -179,31 +209,6 @@ def test_load_tensor():
         "Loaded data should match the original tensor"
     )
     os.remove(file_path)
-
-
-def test_load_file():
-    data = [1, 2, 3]
-    with tempfile.NamedTemporaryFile(mode="w+", delete=False) as temp_file:
-        file_path = temp_file.name
-        temp_file.writelines(f"{item}\n" for item in data)
-    loaded_data = load_file(file_path)
-    assert loaded_data == [str(i) for i in data], (
-        "Loaded data should match the original list"
-    )
-    os.remove(file_path)
-
-
-def test_load_file__not_a_file():
-    with tempfile.TemporaryDirectory() as temp_dir:
-        with pytest.raises(IsADirectoryError):
-            load_file(temp_dir)
-
-
-def test_load_file__non_existent_file():
-    with tempfile.TemporaryDirectory() as temp_dir:
-        file_path = Path(temp_dir) / "non_existent.txt"
-        with pytest.raises(FileNotFoundError):
-            load_file(file_path)
 
 
 def test_load_image():

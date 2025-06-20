@@ -26,6 +26,7 @@
     "hspace",
     "imread",
     "imshow",
+    "imwrite",
     "ipykernel",
     "linestyle",
     "matplotlib",
