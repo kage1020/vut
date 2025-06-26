@@ -33,6 +33,7 @@ from .mapping import (
 )
 from .palette import RGB, ColorMapName, create_palette, template
 from .reduction import compute_tsne
+from .rich import track
 from .time import format_time, get_elapsed_time, get_time
 from .util import (
     Env,
@@ -118,6 +119,7 @@ __all__ = [
     "to_rgba",
     "to_segments",
     "to_tensor",
+    "track",
     "TrainingConfig",
     "unique",
 ]
