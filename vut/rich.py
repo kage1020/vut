@@ -1,18 +1,38 @@
 from typing import Callable, Iterable, List, Optional, Sequence, TypeVar, Union
 
+import rich.filesize as filesize
 from rich.console import Console
 from rich.progress import (
     BarColumn,
+    MofNCompleteColumn,
     Progress,
     ProgressColumn,
+    Task,
     TaskProgressColumn,
     TextColumn,
     TimeElapsedColumn,
     TimeRemainingColumn,
 )
 from rich.style import StyleType
+from rich.text import Text
 
 ProgressType = TypeVar("ProgressType")
+
+
+class IterationSpeedColumn(ProgressColumn):
+    """Displays iteration speed in it/s (iterations per second)."""
+
+    def render(self, task: "Task") -> Text:
+        speed = task.finished_speed or task.speed
+        if speed is None:
+            return Text("? it/s", style="progress.percentage")
+        unit, suffix = filesize.pick_unit_and_suffix(
+            int(speed),
+            ["", "×10³", "×10⁶", "×10⁹", "×10¹²"],
+            1000,
+        )
+        data_speed = speed / unit
+        return Text(f"{data_speed:.1f}{suffix} it/s", style="progress.percentage")
 
 
 def track(
@@ -75,11 +95,8 @@ def track(
             TaskProgressColumn(show_speed=show_speed),
             *(["•", TimeRemainingColumn()] if show_remaining else []),
             *(["•", TimeElapsedColumn()] if show_elapsed else []),
-            *(
-                ["•", TextColumn("[progress.count]{task.completed}/{task.total:.0f}")]
-                if show_count
-                else []
-            ),
+            *(["•", MofNCompleteColumn()] if show_count else []),
+            *(["•", IterationSpeedColumn()] if show_speed else []),
         )
     )
     progress = Progress(
