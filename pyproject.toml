@@ -1,6 +1,6 @@
 [project]
 name = "vut"
-version = "0.1.8"
+version = "0.1.9"
 description = "Toolkit for Video Understanding tasks"
 readme = "README.md"
 authors = [{ name = "kage1020", email = "contact@kage1020.com" }]
@@ -36,6 +36,7 @@ dependencies = [
     "pillow>=11.2.1",
     "polars>=1.29.0",
     "python-dotenv>=1.1.0",
+    "pyyaml>=6.0.2",
     "rich>=14.0.0",
     "scikit-learn>=1.6.1",
     "torch>=2.7.0",

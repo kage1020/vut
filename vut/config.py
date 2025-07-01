@@ -1,11 +1,25 @@
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Self
+
+import yaml
 
 
 @dataclass
 class BaseConfig:
     @classmethod
     def from_dict(cls, config_dict: dict[str, Any]) -> Self:
+        """Create a Config object from a dictionary.
+
+        Args:
+            config_dict (dict[str, Any]): The configuration dictionary.
+
+        Raises:
+            ValueError: If the configuration dictionary contains unexpected fields.
+
+        Returns:
+            Self: The created Config object.
+        """
         field_types = {f.name: f.type for f in cls.__dataclass_fields__.values()}
         init_args = {}
         for key, value in config_dict.items():
@@ -18,6 +32,33 @@ class BaseConfig:
             else:
                 raise ValueError(f"Unexpected field '{key}' in '{cls.__name__}'.")
         return cls(**init_args)
+
+    @classmethod
+    def from_yaml(cls, yaml_path: str | Path) -> Self:
+        """Load configuration from a YAML file.
+
+        Args:
+            yaml_path (str | Path): Path to the YAML file.
+
+        Returns:
+            Self: The created Config object.
+
+        Raises:
+            FileNotFoundError: If the YAML file does not exist.
+            yaml.YAMLError: If there is an error parsing the YAML file.
+            ValueError: If the YAML file contains unexpected fields.
+        """
+        yaml_path = Path(yaml_path)
+        if not yaml_path.exists():
+            raise FileNotFoundError(f"YAML file not found: {yaml_path}")
+
+        with open(yaml_path, "r", encoding="utf-8") as f:
+            config_dict = yaml.safe_load(f)
+
+        if config_dict is None:
+            config_dict = {}
+
+        return cls.from_dict(config_dict)
 
 
 @dataclass

@@ -1,17 +1,17 @@
 from pathlib import Path
 
 import matplotlib
-from rich.progress import track
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 from sklearn.metrics import auc, roc_curve
 
 from vut.io import get_images, load_image
 from vut.palette import RGB, ColorMapName, create_palette, template
+from vut.rich import track
 from vut.video.writer import VideoWriter
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 
 def plot_palette(

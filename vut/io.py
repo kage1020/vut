@@ -173,36 +173,27 @@ def load_tensor(path: str | Path) -> Tensor:
 def load_file(path: str | Path) -> list[str]:
     """Load a text file and return its contents as a list of lines.
 
-    .. deprecated:: 0.2.0
-        `load_file` is deprecated and will be removed in v0.3.0.
-        Use `load_lines` instead.
-
     Args:
         path (str | Path): Path to the text file.
 
     Returns:
         list[str]: List of lines in the text file.
     """
-    warnings.warn(
-        "load_file is deprecated and will be removed in v0.3.0. Use load_lines instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
     return load_lines(path)
 
 
-def load_files(path: str | Path, callback=None) -> list[list[str]]:
-    """Load multiple text files and return their contents as a list of lines.
+def load_files(path: str | Path, callback=None) -> dict[str, list[str]]:
+    """Load multiple text files and return their contents as a dictionary with filename as key.
 
     Args:
         path (str | Path): Path to the directory containing text files.
         callback (callable, optional): A function to apply to each line after loading. Defaults to None.
 
     Returns:
-        list[str]: List of lines from all text files in the directory.
+        dict[str, list[str]]: Dictionary with filename as key and list of lines as value.
     """
-    files = list(Path(path).glob("*"))
-    return [load_lines(file, callback) for file in files]
+    files = [f for f in Path(path).glob("*") if f.is_file()]
+    return {file.name: load_lines(file, callback) for file in files}
 
 
 def load_image(path: str | Path) -> NDArray:
