@@ -165,13 +165,16 @@ def test_env(mocker: MockerFixture):
 
 def test_env__dotenv_loading(tmp_path):
     env_file = tmp_path / ".env"
-    env_file.write_text("TEST_VAR=dotenv_value\nTEST_BOOL=true\nTEST_INT=100\n")
+    env_file.write_text(
+        "TEST_VAR=dotenv_value\nTEST_BOOL=true\nTEST_INT=100\nTEST_FLOAT=3.14\n"
+    )
 
     env = Env(str(env_file))
 
     assert env("TEST_VAR") == "dotenv_value", "Should load variable from .env file"
     assert env.bool("TEST_BOOL") is True, "Should load boolean from .env file"
     assert env.int("TEST_INT") == 100, "Should load integer from .env file"
+    assert env.float("TEST_FLOAT") == 3.14, "Should load float from .env file"
 
 
 def test_env_bool(mocker: MockerFixture):

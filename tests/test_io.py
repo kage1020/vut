@@ -332,7 +332,6 @@ def test_load_files__empty_directory():
 
 
 def test_load_files__mixed_file_types():
-    """Test load_files with mixed file types."""
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
 

@@ -35,19 +35,18 @@ class BaseConfig:
 
     @classmethod
     def from_yaml(cls, yaml_path: str | Path) -> Self:
-        """
-        YAMLファイルからConfigオブジェクトを作成する
+        """Load configuration from a YAML file.
 
         Args:
-            yaml_path: YAMLファイルのパス
+            yaml_path (str | Path): Path to the YAML file.
 
         Returns:
-            Configオブジェクト
+            Self: The created Config object.
 
         Raises:
-            FileNotFoundError: YAMLファイルが存在しない場合
-            yaml.YAMLError: YAMLファイルの解析に失敗した場合
-            ValueError: 予期しないフィールドが含まれている場合
+            FileNotFoundError: If the YAML file does not exist.
+            yaml.YAMLError: If there is an error parsing the YAML file.
+            ValueError: If the YAML file contains unexpected fields.
         """
         yaml_path = Path(yaml_path)
         if not yaml_path.exists():
