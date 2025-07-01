@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from pytest_mock import MockerFixture
 
-from vut.visualize import (
+from vut.visualization import (
     make_video,
     plot_action_segmentation,
     plot_feature,

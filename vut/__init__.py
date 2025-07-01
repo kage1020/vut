@@ -45,7 +45,7 @@ from .util import (
     to_tensor,
     unique,
 )
-from .visualize import (
+from .visualization import (
     make_video,
     plot_action_segmentation,
     plot_feature,
