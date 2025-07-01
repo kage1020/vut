@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Literal
 
 import torch
-from torch import Tensor
 from torch.nn import Module
 
 from .logger import get_logger
@@ -74,17 +73,3 @@ def save_model(model: Module, model_path: str | Path) -> None:
     """
     model = model.cpu()
     torch.save(model.state_dict(), str(model_path))
-
-
-def delete_tensors(tensors: torch.Tensor | list[torch.Tensor]) -> None:
-    """Delete tensors to free up memory.
-
-    Args:
-        tensors (torch.Tensor | list[torch.Tensor]): The tensor or list of tensors to be deleted.
-    """
-    if isinstance(tensors, Tensor):
-        tensors = [tensors]
-    for tensor in tensors:
-        if tensor is not None:
-            del tensor
-    torch.cuda.empty_cache() if torch.cuda.is_available() else None

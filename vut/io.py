@@ -192,7 +192,7 @@ def load_files(path: str | Path, callback=None) -> dict[str, list[str]]:
     Returns:
         dict[str, list[str]]: Dictionary with filename as key and list of lines as value.
     """
-    files = list(Path(path).glob("*"))
+    files = [f for f in Path(path).glob("*") if f.is_file()]
     return {file.name: load_lines(file, callback) for file in files}
 
 
