@@ -24,7 +24,9 @@ keywords = [
     "video processing",
 ]
 requires-python = ">=3.12"
-dependencies = [
+
+[project.optional-dependencies]
+full = [
     "einops>=0.8.1",
     "ffmpeg-python>=0.2.0",
     "hydra-core>=1.3.2",

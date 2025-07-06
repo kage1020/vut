@@ -33,6 +33,16 @@ You can install the toolkit using pip:
 pip install vut
 ```
 
+By default, **no dependencies** are installed. This is suitable for code snippet usage or minimal environments.
+
+If you want to use all features with all dependencies, install with:
+
+```bash
+pip install vut[full]
+```
+
+This will install all dependencies required for full functionality.
+
 ## Usage
 
 TODO: Provide usage examples and documentation for the various features and tools in the toolkit.
@@ -68,8 +78,10 @@ git clone https://github.com/kage1020/vut.git
 cd vut
 uv venv
 source .venv/bin/activate
-uv sync
+uv sync --all
 ```
+
+`uv sync --all` command will install all the optional dependencies specified in the `pyproject.toml` file, including those for full functionality like PyTorch, NumPy, OpenCV, and more.
 
 This will install all the required dependencies and set up the development environment.
 
