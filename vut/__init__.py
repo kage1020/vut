@@ -44,6 +44,7 @@ from .util import (
     to_tensor,
     unique,
 )
+from .video import VideoReader, VideoWriter
 from .visualization import (
     make_video,
     plot_action_segmentation,
@@ -122,4 +123,6 @@ __all__ = [
     "track",
     "TrainingConfig",
     "unique",
+    "VideoReader",
+    "VideoWriter",
 ]

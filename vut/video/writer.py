@@ -13,6 +13,18 @@ from PIL import Image
 # Thanks for sharing this code!
 # =========================================
 class VideoWriter:
+    """A class for writing video files.
+
+    ## How to use:
+    ```python
+    from vut.video import VideoWriter
+
+    with VideoWriter("output.mp4", framerate=30, size=(1920, 1080)) as writer:
+        for frame in video_frames:
+            writer.update(frame)
+    ```
+    """
+
     def __init__(
         self,
         filename: str | Path,
