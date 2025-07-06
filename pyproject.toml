@@ -1,6 +1,6 @@
 [project]
 name = "vut"
-version = "0.1.10"
+version = "0.1.11"
 description = "Toolkit for Video Understanding tasks"
 readme = "README.md"
 authors = [{ name = "kage1020", email = "contact@kage1020.com" }]
@@ -24,7 +24,9 @@ keywords = [
     "video processing",
 ]
 requires-python = ">=3.12"
-dependencies = [
+
+[project.optional-dependencies]
+full = [
     "einops>=0.8.1",
     "ffmpeg-python>=0.2.0",
     "hydra-core>=1.3.2",
