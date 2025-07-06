@@ -1,6 +1,6 @@
 [project]
 name = "vut"
-version = "0.1.9"
+version = "0.1.10"
 description = "Toolkit for Video Understanding tasks"
 readme = "README.md"
 authors = [{ name = "kage1020", email = "contact@kage1020.com" }]
