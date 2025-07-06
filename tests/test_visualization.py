@@ -27,16 +27,89 @@ def img():
 @pytest.fixture
 def mock_ffmpeg(mocker: MockerFixture):
     """Mock ffmpeg to avoid dependency on ffmpeg installation"""
-    # Mock the VideoWriter class instead of ffmpeg directly
-    mock_writer = mocker.Mock()
-    mock_writer.__enter__ = mocker.Mock(return_value=mock_writer)
-    mock_writer.__exit__ = mocker.Mock(return_value=None)
-    mock_writer.update = mocker.Mock()
-    
-    mock_writer_class = mocker.patch("vut.visualization.VideoWriter")
-    mock_writer_class.return_value = mock_writer
-    
-    return mock_writer_class
+    mock_stdin = mocker.Mock()
+    mock_stdin.write = mocker.Mock()
+    mock_stdin.close = mocker.Mock()
+
+    mock_process = mocker.Mock()
+    mock_process.stdin = mock_stdin
+    mock_process.wait = mocker.Mock()
+
+    mock_stream = mocker.Mock()
+    mock_stream.output = mocker.Mock(return_value=mock_stream)
+    mock_stream.overwrite_output = mocker.Mock(return_value=mock_stream)
+    mock_stream.run_async = mocker.Mock(return_value=mock_process)
+
+    mocker.patch("ffmpeg.input", return_value=mock_stream)
+
+    return {
+        "stdin": mock_stdin,
+        "process": mock_process,
+        "stream": mock_stream,
+    }
+
+
+def test_plot_palette__save_as_file(mocker: MockerFixture):
+    mocker.patch("matplotlib.pyplot.get_cmap", return_value="viridis")
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_palette(name="viridis", path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_palette__with_palette():
+    palette = np.random.rand(10, 3)
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_palette(palette=palette, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_image__save_as_file(img):
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_image(img, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_image__show_in_jupyter(img, mocker: MockerFixture):
+    mock = mocker.patch("matplotlib.pyplot.show")
+    plot_image(img, is_jupyter=True)
+    mock.assert_called_once()
+
+
+def test_plot_image__return_canvas(img):
+    canvas = plot_image(img, return_canvas=True)
+    assert canvas.shape == (600, 800, 3)
+
+
+def test_plot_images__save_as_file(img):
+    images = [img, img]
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path1 = tmp_file.name
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path2 = tmp_file.name
+    plot_images(images, paths=[path1, path2])
+    assert os.path.exists(path1)
+    assert os.path.exists(path2)
+    os.remove(path1)
+    os.remove(path2)
+
+
+def test_plot_images__show_in_jupyter(img, mocker: MockerFixture):
+    images = [img, img]
+    mock = mocker.patch("matplotlib.pyplot.show")
+    plot_images(images, is_jupyter=True)
+    mock.assert_called_once()
+
+
+def test_plot_images__return_canvas(img):
+    images = [img, img]
+    canvas = plot_images(images, return_canvas=True)
+    assert len(canvas) == 2
 
 
 def test_plot_feature__save_as_file():
@@ -49,35 +122,36 @@ def test_plot_feature__save_as_file():
 
 
 def test_plot_feature__show_in_jupyter(mocker: MockerFixture):
-    mocker.patch("matplotlib.pyplot.show")
     feature = np.random.rand(10, 10)
+    mock = mocker.patch("matplotlib.pyplot.show")
     plot_feature(feature, is_jupyter=True)
+    mock.assert_called_once()
 
 
 def test_plot_feature__return_canvas():
     feature = np.random.rand(10, 10)
     canvas = plot_feature(feature, return_canvas=True)
-    assert canvas is not None
-    assert canvas.ndim == 3
-    assert canvas.shape[2] == 3
+    assert canvas.shape == (600, 800, 3)
 
 
 def test_plot_features__save_as_file():
     features = [np.random.rand(10, 10), np.random.rand(10, 10)]
-    paths = []
-    for i in range(len(features)):
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
-            paths.append(tmp_file.name)
-    plot_features(features, paths=paths)
-    for path in paths:
-        assert os.path.exists(path)
-        os.remove(path)
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path1 = tmp_file.name
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path2 = tmp_file.name
+    plot_features(features, paths=[path1, path2])
+    assert os.path.exists(path1)
+    assert os.path.exists(path2)
+    os.remove(path1)
+    os.remove(path2)
 
 
 def test_plot_features__show_in_jupyter(mocker: MockerFixture):
-    mocker.patch("matplotlib.pyplot.show")
     features = [np.random.rand(10, 10), np.random.rand(10, 10)]
+    mock = mocker.patch("matplotlib.pyplot.show")
     plot_features(features, is_jupyter=True)
+    mock.assert_called_once()
 
 
 def test_plot_features__return_canvas():
@@ -106,17 +180,16 @@ def test_plot_scatter__with_labels():
 
 
 def test_plot_scatter__show_in_jupyter(mocker: MockerFixture):
-    mocker.patch("matplotlib.pyplot.show")
     tsne_result = np.random.rand(20, 2) * 10
+    mock = mocker.patch("matplotlib.pyplot.show")
     plot_scatter(tsne_result, is_jupyter=True)
+    mock.assert_called_once()
 
 
 def test_plot_scatter__return_canvas():
     tsne_result = np.random.rand(20, 2) * 10
     canvas = plot_scatter(tsne_result, return_canvas=True)
-    assert canvas is not None
-    assert canvas.ndim == 3
-    assert canvas.shape[2] == 3
+    assert canvas.shape == (800, 1000, 3)
 
 
 def test_plot_metrics__save_as_file():
@@ -133,37 +206,91 @@ def test_plot_metrics__save_as_file():
 
 
 def test_plot_metrics__show_in_jupyter(mocker: MockerFixture):
-    mocker.patch("matplotlib.pyplot.show")
     metrics = {
         "train_loss": [1.0, 0.8, 0.6, 0.4, 0.2],
         "val_loss": [1.2, 0.9, 0.7, 0.5, 0.3],
-        "accuracy": [0.5, 0.6, 0.7, 0.8, 0.9],
     }
+    mock = mocker.patch("matplotlib.pyplot.show")
     plot_metrics(metrics, is_jupyter=True)
+    mock.assert_called_once()
 
 
 def test_plot_metrics__return_canvas():
     metrics = {
         "train_loss": [1.0, 0.8, 0.6, 0.4, 0.2],
         "val_loss": [1.2, 0.9, 0.7, 0.5, 0.3],
-        "accuracy": [0.5, 0.6, 0.7, 0.8, 0.9],
     }
     canvas = plot_metrics(metrics, return_canvas=True)
-    assert canvas is not None
-    assert canvas.ndim == 3
-    assert canvas.shape[2] == 3
+    assert canvas.shape == (600, 1000, 3)
 
 
 def test_plot_metrics__invalid_metric_data():
-    metrics = {
-        "train_loss": np.array([[1.0, 0.8], [0.6, 0.4]]),  # Invalid 2D data
-    }
-    with pytest.raises(AssertionError):
+    metrics = {"invalid_metric": [[1, 2], [3, 4]]}
+    with pytest.raises(
+        AssertionError,
+        match="Metric data for 'invalid_metric' must be 1D array or list",
+    ):
         plot_metrics(metrics)
 
 
 def test_plot_action_segmentation__save_as_file():
-    ground_truth = [0, 0, 1, 1, 2, 2, 1, 1, 0, 0]
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+    confidences = [0.9, 0.7, 0.8, 0.9, 0.95, 0.85, 0.9, 0.88]
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_action_segmentation(ground_truth, prediction, confidences, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_action_segmentation__show_in_jupyter(mocker: MockerFixture):
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+    confidences = [0.9, 0.7, 0.8, 0.9, 0.95, 0.85, 0.9, 0.88]
+
+    mock = mocker.patch("matplotlib.pyplot.show")
+    plot_action_segmentation(ground_truth, prediction, confidences, is_jupyter=True)
+    mock.assert_called_once()
+
+
+def test_plot_action_segmentation__return_canvas():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+    confidences = [0.9, 0.7, 0.8, 0.9, 0.95, 0.85, 0.9, 0.88]
+
+    canvas = plot_action_segmentation(
+        ground_truth, prediction, confidences, return_canvas=True
+    )
+    assert canvas.shape == (800, 1600, 3)
+
+
+def test_plot_action_segmentation__without_prediction():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    confidences = [0.9, 0.7, 0.8, 0.9, 0.95, 0.85, 0.9, 0.88]
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_action_segmentation(ground_truth, None, confidences, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_action_segmentation__without_confidences():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_action_segmentation(ground_truth, prediction, None, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_action_segmentation__ground_truth_only():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
         path = tmp_file.name
     plot_action_segmentation(ground_truth, path=path)
@@ -171,23 +298,81 @@ def test_plot_action_segmentation__save_as_file():
     os.remove(path)
 
 
-def test_plot_action_segmentation__show_in_jupyter(mocker: MockerFixture):
-    mocker.patch("matplotlib.pyplot.show")
-    ground_truth = [0, 0, 1, 1, 2, 2, 1, 1, 0, 0]
-    plot_action_segmentation(ground_truth, is_jupyter=True)
+def test_plot_action_segmentation__with_labels():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+    labels = ["Background", "Action1", "Action2"]
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_action_segmentation(ground_truth, prediction, labels=labels, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
 
 
-def test_plot_action_segmentation__return_canvas():
-    ground_truth = [0, 0, 1, 1, 2, 2, 1, 1, 0, 0]
-    canvas = plot_action_segmentation(ground_truth, return_canvas=True)
-    assert canvas is not None
-    assert canvas.ndim == 3
-    assert canvas.shape[2] == 3
+def test_plot_action_segmentation__custom_palette():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+    palette = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_action_segmentation(ground_truth, prediction, palette=palette, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_action_segmentation__custom_legend_ncol():
+    ground_truth = [0, 0, 1, 1, 2, 2, 1, 0]
+    prediction = [0, 1, 1, 1, 2, 2, 1, 0]
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
+        path = tmp_file.name
+    plot_action_segmentation(ground_truth, prediction, legend_ncol=3, path=path)
+    assert os.path.exists(path)
+    os.remove(path)
+
+
+def test_plot_action_segmentation__invalid_ground_truth_dimension():
+    ground_truth = [[0, 1], [2, 3]]
+    prediction = [0, 1, 2, 3]
+
+    with pytest.raises(AssertionError, match="Ground truth must be a 1D array"):
+        plot_action_segmentation(ground_truth, prediction)
+
+
+def test_plot_action_segmentation__invalid_prediction_dimension():
+    ground_truth = [0, 1, 2, 3]
+    prediction = [[0, 1], [2, 3]]
+
+    with pytest.raises(AssertionError, match="Prediction must be a 1D array"):
+        plot_action_segmentation(ground_truth, prediction)
+
+
+def test_plot_action_segmentation__length_mismatch():
+    ground_truth = [0, 1, 2]
+    prediction = [0, 1, 2, 3]
+
+    with pytest.raises(
+        AssertionError, match="Ground truth and prediction must have the same length"
+    ):
+        plot_action_segmentation(ground_truth, prediction)
+
+
+def test_plot_action_segmentation__confidences_length_mismatch_with_prediction():
+    ground_truth = [0, 1, 2, 3]
+    prediction = [0, 1, 2, 3]
+    confidences = [0.1, 0.2, 0.3]
+
+    with pytest.raises(
+        AssertionError, match="Confidences and prediction must have the same length"
+    ):
+        plot_action_segmentation(ground_truth, prediction, confidences)
 
 
 def test_plot_roc_curve__save_as_file():
-    ground_truth = [0, 0, 1, 1, 0, 1, 1, 0, 0, 1]
-    prediction = [0.1, 0.2, 0.8, 0.9, 0.3, 0.7, 0.6, 0.1, 0.2, 0.9]
+    ground_truth = [0, 0, 1, 1]
+    prediction = [0.1, 0.4, 0.35, 0.8]
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
         path = tmp_file.name
     plot_roc_curve(ground_truth, prediction, path=path)
@@ -196,138 +381,204 @@ def test_plot_roc_curve__save_as_file():
 
 
 def test_plot_roc_curve__show_in_jupyter(mocker: MockerFixture):
-    mocker.patch("matplotlib.pyplot.show")
-    ground_truth = [0, 0, 1, 1, 0, 1, 1, 0, 0, 1]
-    prediction = [0.1, 0.2, 0.8, 0.9, 0.3, 0.7, 0.6, 0.1, 0.2, 0.9]
+    ground_truth = [0, 0, 1, 1]
+    prediction = [0.1, 0.4, 0.35, 0.8]
+    mock = mocker.patch("matplotlib.pyplot.show")
     plot_roc_curve(ground_truth, prediction, is_jupyter=True)
+    mock.assert_called_once()
 
 
 def test_plot_roc_curve__return_canvas():
-    ground_truth = [0, 0, 1, 1, 0, 1, 1, 0, 0, 1]
-    prediction = [0.1, 0.2, 0.8, 0.9, 0.3, 0.7, 0.6, 0.1, 0.2, 0.9]
+    ground_truth = [0, 0, 1, 1]
+    prediction = [0.1, 0.4, 0.35, 0.8]
     canvas = plot_roc_curve(ground_truth, prediction, return_canvas=True)
-    assert canvas is not None
-    assert canvas.ndim == 3
-    assert canvas.shape[2] == 3
+    assert canvas.shape == (600, 800, 3)
+
+
+def test_plot_roc_curve__ground_truth_not_1d():
+    ground_truth = [[0, 1], [1, 0]]
+    prediction = [0.1, 0.8]
+
+    with pytest.raises(AssertionError, match="Ground truth must be a 1D array"):
+        plot_roc_curve(ground_truth, prediction)
+
+
+def test_plot_roc_curve__prediction_not_1d():
+    ground_truth = [0, 1]
+    prediction = [[0.1, 0.2], [0.8, 0.9]]
+
+    with pytest.raises(AssertionError, match="Prediction must be a 1D array"):
+        plot_roc_curve(ground_truth, prediction)
 
 
 def test_plot_roc_curve__length_mismatch():
-    ground_truth = [0, 0, 1, 1]
-    prediction = [0.1, 0.2, 0.8]  # Length mismatch
-    with pytest.raises(AssertionError):
+    ground_truth = [0, 1, 1]
+    prediction = [0.1, 0.8]
+
+    with pytest.raises(
+        AssertionError, match="Ground truth and prediction must have the same length"
+    ):
         plot_roc_curve(ground_truth, prediction)
 
 
 def test_plot_roc_curve__invalid_ground_truth_labels():
-    ground_truth = [0, 0, 1, 2]  # Invalid label "2"
-    prediction = [0.1, 0.2, 0.8, 0.9]
-    with pytest.raises(AssertionError):
+    ground_truth = [0, 1, 2]
+    prediction = [0.1, 0.4, 0.8]
+
+    with pytest.raises(AssertionError, match="Ground truth must contain only 0 and 1"):
         plot_roc_curve(ground_truth, prediction)
 
 
 def test_make_video__with_image_paths(mock_ffmpeg):
-    # Create temporary image files
     image_paths = []
+    temp_files = []
+
     for i in range(3):
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
-            # Create a simple test image
-            img = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
-            from PIL import Image
-            Image.fromarray(img).save(tmp_file.name)
-            image_paths.append(tmp_file.name)
-    
+        img = np.random.randint(0, 256, (100, 100, 3), dtype=np.uint8)
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as video_file:
+        video_path = video_file.name
+
     try:
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_video:
-            video_path = tmp_video.name
-        
         make_video(image_paths=image_paths, path=video_path)
-        
-        # Verify that ffmpeg was called
-        mock_ffmpeg.assert_called()
-        
+
+        assert mock_ffmpeg["stream"].output.called
+        assert mock_ffmpeg["stream"].overwrite_output.called
+        assert mock_ffmpeg["stream"].run_async.called
+        assert mock_ffmpeg["stdin"].write.called
+
     finally:
-        # Clean up
-        for path in image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
         if os.path.exists(video_path):
             os.remove(video_path)
 
 
 def test_make_video__with_labels_and_data(mock_ffmpeg):
-    # Create temporary image files
     image_paths = []
-    for i in range(3):
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
-            # Create a simple test image
-            img = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
-            from PIL import Image
-            Image.fromarray(img).save(tmp_file.name)
-            image_paths.append(tmp_file.name)
-    
-    ground_truth = [0, 1, 0]
-    prediction = [0, 1, 1]
-    labels = ["action_A", "action_B"]
-    
+    temp_files = []
+
+    for i in range(5):
+        img = np.random.randint(0, 256, (120, 120, 3), dtype=np.uint8)
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+    ground_truth = [0, 1, 2, 1, 0]
+    prediction = [0, 1, 1, 2, 0]
+    confidences = [0.9, 0.8, 0.7, 0.6, 0.95]
+    labels = ["Background", "Action1", "Action2"]
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as video_file:
+        video_path = video_file.name
+
     try:
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_video:
-            video_path = tmp_video.name
-        
         make_video(
             image_paths=image_paths,
             ground_truth=ground_truth,
             prediction=prediction,
+            confidences=confidences,
             labels=labels,
-            path=video_path
+            path=video_path,
+            title="Test Video",
+            fps=2,
+            figsize=(8, 6),
+            legend_ncol=3,
         )
-        
-        # Verify that ffmpeg was called
-        mock_ffmpeg.assert_called()
-        
+
+        assert mock_ffmpeg["stream"].output.called
+        assert mock_ffmpeg["stream"].overwrite_output.called
+        assert mock_ffmpeg["stream"].run_async.called
+        assert mock_ffmpeg["stdin"].write.called
+
     finally:
-        # Clean up
-        for path in image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
         if os.path.exists(video_path):
             os.remove(video_path)
 
 
 def test_make_video__no_segmentation_data(mock_ffmpeg):
-    # Create temporary image files
     image_paths = []
-    for i in range(3):
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_file:
-            # Create a simple test image
-            img = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
-            from PIL import Image
-            Image.fromarray(img).save(tmp_file.name)
-            image_paths.append(tmp_file.name)
-    
+    temp_files = []
+
+    for i in range(2):
+        img = np.random.randint(0, 256, (80, 80, 3), dtype=np.uint8)
+
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+    with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as video_file:
+        video_path = video_file.name
+
     try:
-        with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as tmp_video:
-            video_path = tmp_video.name
-        
         make_video(
             image_paths=image_paths,
             path=video_path,
             show_segmentation=False,
-            show_confidence=False
+            show_confidence=False,
+            fps=1,
         )
-        
-        # Verify that ffmpeg was called
-        mock_ffmpeg.assert_called()
-        
+
+        assert mock_ffmpeg["stream"].output.called
+        assert mock_ffmpeg["stream"].overwrite_output.called
+        assert mock_ffmpeg["stream"].run_async.called
+        assert mock_ffmpeg["stdin"].write.called
+
     finally:
-        # Clean up
-        for path in image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
         if os.path.exists(video_path):
             os.remove(video_path)
 
 
 def test_make_video__invalid_inputs():
-    # Test with no image sources
-    with pytest.raises(AssertionError):
+    with pytest.raises(
+        AssertionError, match="Either image_dir or image_paths must be provided"
+    ):
         make_video()
+
+    with pytest.raises(AssertionError, match="No images found"):
+        make_video(image_paths=[])
+
+    image_paths = []
+    temp_files = []
+
+    try:
+        img = np.random.randint(0, 256, (50, 50, 3), dtype=np.uint8)
+        with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as temp_file:
+            import cv2
+
+            cv2.imwrite(temp_file.name, img)
+            image_paths.append(temp_file.name)
+            temp_files.append(temp_file.name)
+
+        ground_truth = [0, 1]
+
+        with pytest.raises(
+            AssertionError, match="Ground truth length must match number of images"
+        ):
+            make_video(image_paths=image_paths, ground_truth=ground_truth)
+
+    finally:
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
