@@ -39,6 +39,7 @@
     "numpy",
     "opencv",
     "pytest",
+    "PYTHONHASHSEED",
     "pythonpath",
     "sharex",
     "suptitle",
