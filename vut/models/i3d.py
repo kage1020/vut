@@ -32,8 +32,8 @@ class MaxPool3dSamePadding(nn.MaxPool3d):
             return max(self.kernel_size[dim] - (size % self.stride[dim]), 0)
 
     def forward(
-        self, x: Float32[Tensor, "batch", "channel", "frames", "height", "width"]
-    ) -> Float32[Tensor, "batch", "channel", "frames", "height", "width"]:
+        self, x: Float32[Tensor, "batch channel frames height width"]
+    ) -> Float32[Tensor, "batch channel frames height width"]:
         _, _, t, h, w = x.shape
 
         pad_t = self._pad(0, t)
@@ -98,8 +98,8 @@ class Unit3D(nn.Module):
             return max(self._kernel_shape[dim] - (size % self._stride[dim]), 0)
 
     def forward(
-        self, x: Float32[Tensor, "batch", "channel", "frames", "height", "width"]
-    ) -> Float32[Tensor, "batch", "channel", "frames", "height", "width"]:
+        self, x: Float32[Tensor, "batch channel frames height width"]
+    ) -> Float32[Tensor, "batch channel frames height width"]:
         _, _, t, h, w = x.shape
 
         pad_t = self._pad(0, t)
@@ -178,8 +178,8 @@ class InceptionModule(nn.Module):
         self.name = name
 
     def forward(
-        self, x: Float32[Tensor, "batch", "channel", "frames", "height", "width"]
-    ) -> Float32[Tensor, "batch", "channel", "frames", "height", "width"]:
+        self, x: Float32[Tensor, "batch channel frames height width"]
+    ) -> Float32[Tensor, "batch channel frames height width"]:
         b0 = self.b0(x)
         b1 = self.b1b(self.b1a(x))
         b2 = self.b2b(self.b2a(x))
@@ -412,10 +412,10 @@ class I3D(nn.Module):
             self.add_module(k, self.end_points[k])
 
     def forward(
-        self, x: Float32[Tensor, "batch", "channel", "frames", "height":224, "width":224]
+        self, x: Float32[Tensor, "batch channel frames height width"]
     ) -> (
-        Float32[Tensor, "batch", "num_classes", "T"]
-        | Float32[Tensor, "batch", "num_classes", "T", 1, 1]
+        Float32[Tensor, "batch num_classes T"]
+        | Float32[Tensor, "batch num_classes T 1 1"]
     ):
         for end_point in self.VALID_ENDPOINTS:
             if end_point in self.end_points and end_point in self._modules:
@@ -428,8 +428,8 @@ class I3D(nn.Module):
         return logits
 
     def extract_features(
-        self, x: Float32[Tensor, "batch", "channel", "frames", "height":224, "width":224]
-    ) -> Float32[Tensor, "batch", 1024, "T", 1, 1]:
+        self, x: Float32[Tensor, "batch channel frames height width"]
+    ) -> Float32[Tensor, "batch 1024 T 1 1"]:
         for end_point in self.VALID_ENDPOINTS:
             if end_point in self.end_points:
                 x = self._modules[end_point](x)

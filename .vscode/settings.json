@@ -29,6 +29,7 @@
     "imshow",
     "imwrite",
     "ipykernel",
+    "jaxtyping",
     "linestyle",
     "matplotlib",
     "ncol",
