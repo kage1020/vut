@@ -17,6 +17,7 @@ def init_seed(seed: int = 42) -> None:
     Args:
         seed (int, optional): Seed value for random number generation. Defaults to 42.
     """
+    os.environ["PYTHONHASHSEED"] = str(seed)
     torch.backends.cudnn.enabled = True
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = True
