@@ -2177,7 +2177,7 @@ wheels = [
 
 [[package]]
 name = "vut"
-version = "0.1.14"
+version = "0.1.15"
 source = { virtual = "." }
 
 [package.optional-dependencies]
