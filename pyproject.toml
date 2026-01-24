@@ -1,6 +1,6 @@
 [project]
 name = "vut"
-version = "0.1.14"
+version = "0.1.15"
 description = "Toolkit for Video Understanding tasks"
 readme = "README.md"
 authors = [{ name = "kage1020", email = "contact@kage1020.com" }]
@@ -80,4 +80,4 @@ omit = ["*/__init__.py"]
 directory = "coverages"
 
 [tool.ruff]
-extend-ignore = ["F821"]
+lint.extend-ignore = ["F821"]

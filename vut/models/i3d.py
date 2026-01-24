@@ -10,6 +10,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from jaxtyping import Float32
 
+
 class MaxPool3dSamePadding(nn.MaxPool3d):
     stride: tuple[int, int, int]
     kernel_size: tuple[int, int, int]
@@ -410,6 +411,19 @@ class I3D(nn.Module):
 
         for k in self.end_points.keys():
             self.add_module(k, self.end_points[k])
+
+    def replace_logits(self, num_classes: int) -> None:
+        self._num_classes = num_classes
+        self.logits = Unit3D(
+            in_channels=384 + 384 + 128 + 128,
+            out_channels=self._num_classes,
+            kernel_shape=(1, 1, 1),
+            padding=0,
+            activation_fn=None,
+            use_batch_norm=False,
+            use_bias=True,
+            name="logits",
+        )
 
     def forward(
         self, x: Float32[Tensor, "batch channel frames height width"]

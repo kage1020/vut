@@ -64,6 +64,18 @@ def test_i3d__invalid_endpoint():
         I3D(final_endpoint="invalid_endpoint")
 
 
+def test_i3d__replace_logits_updates_num_classes():
+    model = I3D(num_classes=400)
+
+    assert model._num_classes == 400
+
+    model.replace_logits(num_classes=50)
+
+    assert model._num_classes == 50
+    assert model.logits.conv3d.out_channels == 50
+
+
+
 def test_unit3d():
     device = get_device()
     unit = Unit3D(in_channels=3, out_channels=64, kernel_shape=(3, 3, 3))
